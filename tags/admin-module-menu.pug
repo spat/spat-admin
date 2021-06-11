@@ -5,6 +5,6 @@ admin-module-menu
         img(src='{opts.logo}')
     div.mb32(each='{section in opts.menu}')
       div.bold.fs12.mb8 {section.label}
-      div.ml8
-        div(each='{item in section.items}')
+      div
+        div.hover-trigger.hover-bg-gray.rounded-8.pl8(each='{item in section.items}')
           a.p8.block(href='{item.link}') {item.label}

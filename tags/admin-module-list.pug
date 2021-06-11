@@ -6,7 +6,7 @@ admin-module-list
         th.border-bottom(each='{heading in schema.headings}', style='width: {heading.width}')
           div.w-full.text-center.fs11.text-gray.py16 {heading.label}
     tbody
-      tr.border-bottom.hover-trigger.hover-bg-gray.cursor-pointer(each='{item in items}', onclick='{onSelect}')
+      tr.border-bottom.hover-trigger.hover-bg-dark.cursor-pointer(each='{item in items}', onclick='{onSelect}')
         td.p12(each='{heading in schema.headings}')
           div.fs13(data-is='admin-item-{heading.type}', value='{admin.utils.$get(item, heading.key)}', heading='{heading}')
 

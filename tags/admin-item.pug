@@ -1,0 +1,10 @@
+admin-item-text
+  p.line-clamp-1 {opts.riotValue}
+
+admin-item-date
+  p(if='{!opts.riotValue}') -
+  p(if='{opts.riotValue}') {dayjs(opts.riotValue).format('YYYY/MM/DD HH:mm')}
+
+admin-item-image
+  img(src='{opts.riotValue.url}')
+  

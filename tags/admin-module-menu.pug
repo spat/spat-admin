@@ -1,0 +1,10 @@
+admin-module-menu 
+  div.s-full.bg-primary.text-white.p16
+    div.p16.f.fh.mb32
+      a(href='/')
+        img(src='{opts.logo}')
+    div.mb32(each='{section in opts.menu}')
+      div.bold.fs12.mb8 {section.label}
+      div.ml8
+        div(each='{item in section.items}')
+          a.p8.block(href='{item.link}') {item.label}

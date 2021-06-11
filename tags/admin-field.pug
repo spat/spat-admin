@@ -1,0 +1,208 @@
+admin-field-text
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  input.input.w-full(ref='input', type='text', value='{opts.riotValue}')
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.getValue = () => {
+      return this.refs.input.value;
+    };
+
+admin-field-textarea
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  textarea.input.w-full.lh15(ref='input', rows='{opts.field.rows || 4}') {opts.riotValue}
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.getValue = () => {
+      return this.refs.input.value;
+    };
+
+admin-field-date
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  input.input.w-full(ref='datetimepicker', required='{opts.option.required}', placeholder='{opts.field.options.placeholder}' readonly='{opts.option.readonly}')
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+
+    this.on('mount', () => {
+      $(this.refs.datetimepicker).datetimepicker({});
+
+      if (this.opts.riotValue) {
+        var format = opts.field.options.format || 'YYYY/MM/DD HH:mm';
+        this.refs.datetimepicker.value = dayjs(this.opts.riotValue).format(format);
+      }
+
+      this.update();
+    });
+
+    this.getValue = () => {
+      var datetime = dayjs(this.refs.datetimepicker.value.valueOf());
+      return +datetime;
+    };
+
+// TODO:
+admin-field-markdown
+  div markdown
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+admin-field-select
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  select.select.px16.py12.pr40(ref='input')
+    option(each='{option in opts.field.options}', value='{option.value}') {option.label}
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('mount', () => {
+      this.refs.input.value = this.opts.riotValue;
+    });
+    this.getValue = () => {
+      return this.refs.input.value;
+    };
+
+admin-field-switch
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  //- div (スイッチフォーム)
+  div.relative.switch.cursor-pointer.s-full.rounded-full.transition.f.fm.border(class='{checked: checked}', onclick='{toggle}')
+    //- ○
+    div.inner-button.flex-fixed.relative.ml3
+  style(scoped, type='less').
+    //- ボタンの大きさ指定の変数
+    @width: 50px;
+    @height: 27px;
+    @border-width: 1px;
+    @inner-button-size: 20px;
+    //- 横幅からinner-buttonの高さを引いた分だけ動かすと綺麗に収まる
+    :scope {
+      display: block;
+      width: @width;
+      height: @height;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      
+      .switch {
+        border-width: @border-width;
+        &.checked {
+          background-color: #2196f3;
+          border-color: #E1E1E1;
+          .inner-button {
+            transform: translateX(@inner-button-size + 3);
+          }
+        }
+      }
+      //- switchのまるの部分
+      .inner-button {
+        width: @inner-button-size;
+        height: @inner-button-size;
+        transform: translateX(-@border-width);
+        background-color: lightgray;
+        border-radius: 50%;
+        transition: 256ms;
+      }
+    }
+  script.
+
+    this.on('mount', () => {
+      this.checked = this.opts.riotValue;
+      this.update();
+    });
+
+    this.getValue = () => {
+      return this.checked;
+    };
+
+    this.toggle = (e) => {
+      this.checked = !this.checked;
+    };
+
+admin-field-image
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  div.bg-gray_pale.relative.w300.h200.border.rounded-4.cursor-pointer.mb4(onclick='{onSelectImage}')
+    img.s-full.object-fit-contain(if="{url || opts.riotValue.url}", src='{url || opts.riotValue.url}')
+    div.absolute.trbl0.s-full.f.fh.fs26 +
+  div.fs10.mb16 クリック または ドラッグ&ドロップで追加できます
+  
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('mount', () => {
+      this.input = document.createElement('input');
+      this.input.type = 'file';
+      this.input.accept = 'image/*';
+      
+      //- 選択して投稿する箇所
+      this.input.onchange = async (e) => {
+        var file = e.currentTarget.files[0];
+        if (!file) return ;
+        this._setFile(file);
+        this.update();
+      };
+
+      // drag and drop対応
+      this.root.ondragover = (e) => { return false; };
+      this.root.ondrop = (e) => {
+        var file = e.dataTransfer.files[0];
+        if (!file) return ;
+        
+        //- jpeg, png, gif以外alert表示
+        if (!this.validateFileImageOnly(file.type)) {
+          e.preventDefault();
+          spat.modal.alert('その形式のファイルは登録できません。');
+          return;
+        }
+
+        this._setFile(file);
+        return false;
+      };
+    });
+
+    this.onSelectImage = (e) => {
+      e.preventDefault();
+      this.input.click();
+    };
+
+    this._setFile = async (file) => {
+      this.file = file;
+      this.url = URL.createObjectURL(file);
+      this.update();
+    };
+
+    this.getValue = async () => {
+      if (!this.file) return;
+
+      var url = await app.utils.uploadFile(this.file);
+      return {
+        url: url,
+      }
+    };
+
+    //- image以外ならfalseを返す
+    this.validateFileImageOnly = (type) => {
+      var re = /(^image\/\w*)/;
+      return re.test(type);
+    };
+

@@ -1,0 +1,102 @@
+admin-module-form
+  form#form1.p32(ref='form', onsubmit='{onSubmit}')
+    div.block.mb32(each='{field in schema.fields}')
+      div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{item.data[field.key]}', item='{item}')
+
+    //- 外から submit できるようにするためのボタン
+    button.hide(ref='btn') submit
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.setup = async ({path}) => {
+      // フルパス
+      this.path = path;
+      // ID
+      this.id = app.utils.path.basename(path);
+      // ディレクトリ
+      this.basename = app.utils.path.dirname(path);
+      // コレクション名
+      this.collection = this.basename.split('/').pop();
+      
+      if (this.id !== 'new') {
+        var item = await app.admin.crud.get({
+          path: path,
+        });
+
+        this.item = item;
+      }
+
+      // schema を取得
+      // collection もしくは collection/id に一致するスキーマ
+      var schema = app.admin.schema[this.collection] || app.admin.schema[this.collection+'/'+this.id];
+      this.schema = schema;
+
+      this.update();
+    };
+
+    this.submit = () => {
+      this.refs.btn.click();
+    };
+
+    this.onSubmit = (e) => {
+      e.preventDefault();
+
+      this.save();
+    };
+
+    this.save = async () => {
+      var data = {};
+
+      var fileds = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+
+      var promises = fileds.map(async field => {
+        if (!field.getValue) return ;
+
+        var value = field.getValue();
+
+        //- imageアップ時、プロミスで返ってくるのを対応
+        if (value instanceof Promise) {
+          value = await value;
+        }
+
+        data[field.opts.field.key] = value;
+      });
+
+      await Promise.all(promises);
+      
+
+      if (!this.item) {
+        var item = await app.admin.crud.post({
+          path: this.collection,
+          data,
+        });
+
+        this.item = item;
+
+        this.trigger('create', {
+          item,
+        });
+        this.opts.oncreate && this.opts.oncreate({
+          item,
+        });
+      }
+      else {
+        var item = await app.admin.crud.put({
+          path: this.path,
+          data,
+        });
+
+        this.item = item;
+        this.trigger('save', {
+          item,
+        });
+      }
+
+      this.update();
+
+      spat.toast.message('保存');
+    };

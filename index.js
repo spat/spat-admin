@@ -1,1 +1,2 @@
-console.log('admin index');
+
+import './tags/**/*.pug';

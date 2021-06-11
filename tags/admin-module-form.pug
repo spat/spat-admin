@@ -32,7 +32,8 @@ admin-module-form
 
       // schema を取得
       // collection もしくは collection/id に一致するスキーマ
-      var schema = app.admin.schema[this.collection] || app.admin.schema[this.collection+'/'+this.id];
+      var schema_path = path.split('/').filter((path, index) => { return index%2; } ).join('.'); // id を取り除く
+      var schema = admin.utils.$get(app.admin.schema, schema_path) || app.admin.schema[this.collection+'/'+this.id];
       this.schema = schema;
 
       this.update();

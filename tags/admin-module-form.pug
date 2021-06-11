@@ -1,7 +1,7 @@
 admin-module-form
   form#form1.p32(ref='form', onsubmit='{onSubmit}')
     div.block.mb32(each='{field in schema.fields}')
-      div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{item.data[field.key]}', item='{item}')
+      div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}')
 
     //- 外から submit できるようにするためのボタン
     button.hide(ref='btn') submit
@@ -63,11 +63,10 @@ admin-module-form
           value = await value;
         }
 
-        data[field.opts.field.key] = value;
+        admin.utils.$set(data, field.opts.field.key, value);
       });
 
       await Promise.all(promises);
-      
 
       if (!this.item) {
         var item = await app.admin.crud.post({

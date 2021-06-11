@@ -1,3 +1,4 @@
+//- 一覧用パーツ
 admin-module-list
   table.table-layout-fixed.w-full.border-spacing-0.border-collapse-collapse
     thead
@@ -7,7 +8,7 @@ admin-module-list
     tbody
       tr.border-bottom.hover-trigger.hover-bg-gray.cursor-pointer(each='{item in items}', onclick='{onSelect}')
         td.p12(each='{heading in schema.headings}')
-          div.fs13(data-is='admin-item-{heading.type}', value='{item.data[heading.key]}')
+          div.fs13(data-is='admin-item-{heading.type}', value='{admin.utils.$get(item, heading.key)}', heading='{heading}')
 
   style(type='less').
     :scope {

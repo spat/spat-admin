@@ -83,9 +83,10 @@ admin-field-select
 admin-field-switch
   div.fs11.bold.text-gray.mb8 {opts.field.label}
   //- div (スイッチフォーム)
-  div.relative.switch.cursor-pointer.s-full.rounded-full.transition.f.fm.border(class='{checked: checked}', onclick='{toggle}')
+  div.relative.switch.cursor-pointer.s-full.rounded-full.transition.f.fm.border(class='{"bg-primary checked": checked}', onclick='{toggle}')
     //- ○
     div.inner-button.flex-fixed.relative.ml3
+
   style(scoped, type='less').
     //- ボタンの大きさ指定の変数
     @width: 50px;
@@ -104,8 +105,6 @@ admin-field-switch
       .switch {
         border-width: @border-width;
         &.checked {
-          background-color: #2196f3;
-          border-color: #E1E1E1;
           .inner-button {
             transform: translateX(@inner-button-size + 3);
           }

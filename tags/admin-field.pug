@@ -207,5 +207,13 @@ admin-field-image
 
 
 admin-field-list
-  // TODO: 実装する(admin-module-list)
-  div リスト表示
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  div.border
+    div(ref='list', data-is='admin-module-list')
+
+  script.
+    this.on('mount', () => {
+      this.refs.list.setup({
+        path: `${this.opts.item.path}/${this.opts.field.key}`,
+      });
+    });

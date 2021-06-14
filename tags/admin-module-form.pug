@@ -83,6 +83,7 @@ admin-module-form
         this.opts.oncreate && this.opts.oncreate({
           item,
         });
+        spat.router.replace(`/${item.path}`);
       }
       else {
         var item = await app.admin.crud.put({

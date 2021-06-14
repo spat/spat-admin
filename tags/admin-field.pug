@@ -65,7 +65,7 @@ admin-field-markdown
 admin-field-select
   div.fs11.bold.text-gray.mb8 {opts.field.label}
   select.select.px16.py12.pr40(ref='input')
-    option(each='{choice in opts.field.options.choices}', value='{choice.value}') {choice.label || choice.value}
+    option(each='{choice in choices}', value='{choice.value}') {choice.label || choice.value}
 
   style(type='less').
     :scope {
@@ -73,7 +73,16 @@ admin-field-select
     }
 
   script.
-    this.on('mount', () => {
+    this.on('mount', async () => {
+      var choices = opts.field.options.choices;
+      if (typeof choices === 'function') {
+        choices = choices();
+        if (choices instanceof Promise) {
+          choices = await choices;
+        }
+      }
+      this.update({choices});
+
       this.refs.input.value = this.opts.riotValue;
     });
     this.getValue = () => {

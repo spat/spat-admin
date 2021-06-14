@@ -65,7 +65,7 @@ admin-field-markdown
 admin-field-select
   div.fs11.bold.text-gray.mb8 {opts.field.label}
   select.select.px16.py12.pr40(ref='input')
-    option(each='{option in opts.field.options}', value='{option.value}') {option.label}
+    option(each='{choice in opts.field.options.choices}', value='{choice.value}') {choice.label || choice.value}
 
   style(type='less').
     :scope {

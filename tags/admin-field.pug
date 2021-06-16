@@ -1,6 +1,6 @@
 admin-field-text
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  input.input.w-full(ref='input', type='text', value='{opts.riotValue}', readonly='{opts.field.options.readonly}')
+  input.input.w-full(ref='input', type='text', value='{opts.riotValue}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
 
   style(type='less').
     :scope {
@@ -14,7 +14,7 @@ admin-field-text
 
 admin-field-textarea
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  textarea.input.w-full.lh15(ref='input', rows='{opts.field.rows || 4}', readonly='{opts.field.options.readonly}') {opts.riotValue}
+  textarea.input.w-full.lh15(ref='input', rows='{opts.field.rows || 4}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}') {opts.riotValue}
 
   style(type='less').
     :scope {
@@ -28,7 +28,7 @@ admin-field-textarea
 
 admin-field-date
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  input.input.w-full(ref='datetimepicker', required='{opts.option.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}')
+  input.input.w-full(ref='datetimepicker', required='{opts.option.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
 
   style(type='less').
     :scope {

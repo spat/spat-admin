@@ -105,14 +105,15 @@ admin-field-switch
     //- 横幅からinner-buttonの高さを引いた分だけ動かすと綺麗に収まる
     :scope {
       display: block;
-      width: @width;
-      height: @height;
-      cursor: pointer;
-      -webkit-user-select: none;
-      user-select: none;
       
       .switch {
+        width: @width;
+        height: @height;
+        cursor: pointer;
+        -webkit-user-select: none;
+        user-select: none;
         border-width: @border-width;
+
         &.checked {
           .inner-button {
             transform: translateX(@inner-button-size + 3);

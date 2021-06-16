@@ -1,0 +1,41 @@
+admin-modal-collection.f.fh
+  div.f.flex-column.bg-white.w80vw.h80vh.rounded-8(ref='modal')
+    div.h80.f.fr.fm.p16.border-bottom
+      input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedSyncCandidates}')
+    div.p16.overflow-scroll.h-full.bg-whitesmoke
+      button.block.w-full.text-left.p8.border.rounded-4.bg-white.hover-trigger.hover-bg-dark.mb8(type='button', each='{item, index in candidates}', value='{getItemValue(item)}', onclick='{onSelect}') {index}. {getItemLabel(item)}
+
+  style(type='less').
+    :scope {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  
+  script.
+    this.on('mount', () => {
+      this.syncCandidates();
+    });
+
+    // 候補一覧を更新
+    this.syncCandidates = async () => {
+      this.candidates = await app.admin.crud.index({
+        path: `${this.opts.options.collection}`,
+        keyword: this.refs.search.value,
+      });
+      this.update();
+    };
+
+    this.debouncedSyncCandidates = _.debounce((e) => {
+      this.syncCandidates();
+    }, 100);
+
+    this.getItemValue = (item) => {
+      return admin.utils.$get(item, this.opts.options.value_key);
+    };
+    this.getItemLabel = (item) => {
+      return admin.utils.$get(item, this.opts.options.label_key);
+    };
+
+    this.onSelect = (e) => {
+      this.value = e.item.item;
+      this.close();
+    };

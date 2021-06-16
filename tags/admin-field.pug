@@ -229,26 +229,97 @@ admin-field-list
     });
 
 
-//- コレクション選択フォーム
+//- コレクション選択フォーム(old)
+//- datalist 使ってたやつだけど微妙だったのでモーダル版を採用
+//- admin-field-collection
+//-   div.fs11.bold.text-gray.mb8 {opts.field.label}
+//-   form.f.fm.mb8(onsubmit='{submit}')
+//-     input.input.w50per.mr4(ref='input', type='text', list='{opts.field.label}', oninput='{debouncedSyncCandidates}', onselect='{hoge}')
+//-     //- button.button 追加
+//-   div
+//-     div.p6.border.rounded-4.mb4(each='{item, index in items}')
+//-       div.f.relative
+//-         span {index}. {getItemLabel(item)}
+
+//-   datalist(id='{opts.field.label}')
+//-     option(each='{item in candidates}', value='{getItemValue(item)}') {getItemLabel(item)}
+
+//-   script.
+
+//-     this.on('mount', async () => {
+//-       this.value = opts.riotValue;
+
+//-       this.syncCandidates();
+
+//-       // 個別記事を取得する
+//-       var promises = opts.riotValue.map(async id => {
+//-         return app.admin.crud.get({
+//-           path: `${this.opts.field.options.collection}/${id}`
+//-         });
+//-       });
+
+//-       this.items = await Promise.all(promises);
+//-       this.update();
+//-     });
+
+//-     this.submit = (e) => {
+//-       e.stopPropagation();
+//-       e.preventDefault();
+//-     };
+
+//-     // 候補一覧を更新
+//-     this.syncCandidates = async () => {
+//-       this.candidates = await app.admin.crud.index({
+//-         path: `${this.opts.field.options.collection}`,
+//-         keyword: this.refs.input.value,
+//-       });
+//-       this.update();
+//-     };
+
+//-     this.debouncedSyncCandidates = _.debounce((e) => {
+//-       // 入力内容とヒットする item を探す
+//-       var item = this.candidates.find(item => this.getItemValue(item) === e.target.value);
+
+//-       if (item) {
+//-         this.items.push(item);
+//-         e.target.value = '';
+//-         this.update();
+//-       }
+//-       else {
+//-         this.syncCandidates();
+//-       }
+//-     }, 100);
+
+//-     this.getItemValue = (item) => {
+//-       return admin.utils.$get(item, this.opts.field.options.value_key);
+//-     };
+//-     this.getItemLabel = (item) => {
+//-       return admin.utils.$get(item, this.opts.field.options.label_key);
+//-     };
+
+//-     this.getValue = () => {
+//-       var values = this.items.map(item => this.getItemValue(item));
+//-       return values;
+//-     };
+
+
+//- コレクション選択フォーム(old)
+//- datalist 使ってたやつだけど微妙だったのでモーダル版を採用
 admin-field-collection
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  form.f.fm.mb8(onsubmit='{submit}')
-    input.input.w50per.mr4(ref='input', type='text', list='{opts.field.label}', oninput='{debouncedSyncCandidates}', onselect='{hoge}')
-    //- button.button 追加
-  div
-    div.p6.border.rounded-4.mb4(each='{item, index in items}')
-      div.f.relative
+  div.mb8
+    div.p8.border.rounded-4.mb4(each='{item, index in items}')
+      div.f.fm.fbw
         span {index}. {getItemLabel(item)}
-
-  datalist(id='{opts.field.label}')
-    option(each='{item in candidates}', value='{getItemValue(item)}') {getItemLabel(item)}
+        button(type='button', onclick='{onDeleteItem}')
+          i.material-icons.text-gray.fs18 delete
+  div
+    button.button(type='button', onclick='{onOpenModal}') 追加
 
   script.
 
     this.on('mount', async () => {
       this.value = opts.riotValue;
-
-      this.syncCandidates();
 
       // 個別記事を取得する
       var promises = opts.riotValue.map(async id => {
@@ -261,39 +332,29 @@ admin-field-collection
       this.update();
     });
 
-    this.submit = (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-    };
-
-    // 候補一覧を更新
-    this.syncCandidates = async () => {
-      this.candidates = await app.admin.crud.index({
-        path: `${this.opts.field.options.collection}`,
-        keyword: this.refs.input.value,
+    this.onOpenModal = async () => {
+      var modal = spat.modal.open('admin-modal-collection', {
+        options: this.opts.field.options,
       });
-      this.update();
-    };
 
-    this.debouncedSyncCandidates = _.debounce((e) => {
-      // 入力内容とヒットする item を探す
-      var item = this.candidates.find(item => this.getItemValue(item) === e.target.value);
+      var item = await modal.waitClose();
 
       if (item) {
         this.items.push(item);
-        e.target.value = '';
         this.update();
       }
-      else {
-        this.syncCandidates();
-      }
-    }, 100);
+    };
 
     this.getItemValue = (item) => {
       return admin.utils.$get(item, this.opts.field.options.value_key);
     };
     this.getItemLabel = (item) => {
       return admin.utils.$get(item, this.opts.field.options.label_key);
+    };
+
+    this.onDeleteItem = (e) => {
+      this.items = this.items.filter(item => item !== e.item.item);
+      this.update();
     };
 
     this.getValue = () => {

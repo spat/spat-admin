@@ -331,12 +331,10 @@ admin-field-collection
   script.
 
     this.on('mount', async () => {
-      this.value = opts.riotValue;
-
       // 複数選択
       if (this.isMultiple()) {
         // 個別にデータを取得する
-        var promises = opts.riotValue.map(async key => {
+        var promises = (opts.riotValue || []).map(async key => {
           return app.admin.crud.get({
             path: `${this.opts.field.options.collection}/${key}`
           });

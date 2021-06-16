@@ -307,29 +307,66 @@ admin-field-list
 //- datalist 使ってたやつだけど微妙だったのでモーダル版を採用
 admin-field-collection
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  div.mb8
+  div.mb8(ref='items')
     div.p8.border.rounded-4.mb4(each='{item, index in items}')
       div.f.fm.fbw
-        span {index}. {getItemLabel(item)}
+        div.f.fm
+          i.material-icons.mr4.handle.cursor-grab import_export
+          span {index}. {getItemLabel(item)}
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
   div
-    button.button(type='button', onclick='{onOpenModal}') 追加
+    button.button(type='button', onclick='{onOpenModal}') {isMultiple() ? '追加' : '設定'}
+
+
+  style(type='less').
+    :scope {
+      display: block;
+      .cursor-grab {
+        cursor: grab;
+      }
+    }
 
   script.
 
     this.on('mount', async () => {
       this.value = opts.riotValue;
 
-      // 個別記事を取得する
-      var promises = opts.riotValue.map(async id => {
-        return app.admin.crud.get({
-          path: `${this.opts.field.options.collection}/${id}`
+      // 複数選択
+      if (this.isMultiple()) {
+        // 個別にデータを取得する
+        var promises = opts.riotValue.map(async key => {
+          return app.admin.crud.get({
+            path: `${this.opts.field.options.collection}/${key}`
+          });
         });
-      });
+        this.items = await Promise.all(promises);
+        this.update();
 
-      this.items = await Promise.all(promises);
-      this.update();
+        // ソート設定
+        Sortable.create(this.refs.items, {
+          animation: 150,
+          handle: '.handle',
+          onEnd: async (e) => {
+            var items = this.items;
+            var temp = items.splice(e.oldIndex, 1)[0];
+            items.splice(e.newIndex, 0, temp);
+            this.update();
+          },
+        });
+      }
+      // 単体選択
+      else {
+        this.items = [];
+        if (this.opts.riotValue) {
+          var item = await app.admin.crud.get({
+            path: `${this.opts.field.options.collection}/${this.opts.riotValue}`
+          });
+
+          this.items.push(item);
+        }
+        this.update();
+      }
     });
 
     this.onOpenModal = async () => {
@@ -340,8 +377,15 @@ admin-field-collection
       var item = await modal.waitClose();
 
       if (item) {
-        this.items.push(item);
-        this.update();
+        // 複数選択
+        if (this.isMultiple()) {
+          this.items.push(item);
+        }
+        // 単体選択
+        else {
+          this.items[0] = item;
+        }
+        riot.update();
       }
     };
 
@@ -358,6 +402,15 @@ admin-field-collection
     };
 
     this.getValue = () => {
-      var values = this.items.map(item => this.getItemValue(item));
-      return values;
+      if (this.isMultiple()) {
+        var values = this.items.map(item => this.getItemValue(item));
+        return values;
+      }
+      else {
+        return this.getItemValue(this.items[0]);
+      }
+    };
+
+    this.isMultiple = () => {
+      return this.opts.field.options.multiple;
     };

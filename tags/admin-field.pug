@@ -22,6 +22,37 @@ admin-field-textarea
     }
   
   script.
+    this.on('mount', () => {
+      this.refs.input.ondragover = (e) => { return false; };
+      this.refs.input.ondrop = async (e) => {
+        e.preventDefault();
+
+        var i = spat.modal.indicator();
+
+        let file = e.dataTransfer.files[0];
+        let {snapshot} = await app.utils.uploadFile(file);
+
+        // imgix の url に変換
+        let url = `${spat.config.imgix.domain}/${snapshot.ref.fullPath}?auto=format,compress`;
+
+        this.insertText(`![](${url})\n`);
+
+        i.close();
+      };
+    });
+
+    this.insertText = (text) => {
+      let input = this.refs.input;
+      let cursorPosition = input.selectionStart;
+
+      let before = input.value.substr(0, cursorPosition);
+      let after = input.value.substr(cursorPosition);
+
+      input.value = before + text + after;
+
+      input.selectionStart = input.selectionEnd = cursorPosition + text.length;
+    };
+
     this.getValue = () => {
       return this.refs.input.value;
     };
@@ -203,9 +234,9 @@ admin-field-image
     this.getValue = async () => {
       if (!this.file) return;
 
-      var url = await app.utils.uploadFile(this.file);
+      var {url} = await app.utils.uploadFile(this.file);
       return {
-        url: url,
+        url,
       }
     };
 

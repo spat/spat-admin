@@ -1,7 +1,13 @@
 admin-module-form
-  form#form1.p32(if='{visible}', ref='form', onsubmit='{onSubmit}')
-    div.block.mb32(each='{field in schema.fields}')
-      div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}')
+  form#form1.row.mxn16(if='{visible}', ref='form', onsubmit='{onSubmit}')
+    div.mb32(each='{form in schema.forms}', class='{form.class}')
+      div.box-shadow.rounded-4.bg-white.p32.mx16
+        div.mb16
+          div.fs18.bold.mb8 {form.label}
+          div.h2.w-full.bg-primary
+        div.row
+          div.block.w-full.mb32(each='{field in form.fields}', class='{field.class}')
+            div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}')
 
     //- 外から submit できるようにするためのボタン
     button.hide(ref='btn') submit
@@ -63,9 +69,9 @@ admin-module-form
     this.save = async () => {
       var data = {};
 
-      var fileds = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+      var fields = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
 
-      var promises = fileds.map(async field => {
+      var promises = fields.map(async field => {
         if (!field.getValue) return ;
 
         var value = field.getValue();

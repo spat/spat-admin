@@ -29,13 +29,22 @@ admin-field-textarea
 
         var i = spat.modal.indicator();
 
-        let file = e.dataTransfer.files[0];
-        let {snapshot} = await app.utils.uploadFile(file);
+        // ファイルをすべてアップロードして url を取得
+        var files = Array.from(e.dataTransfer.files);
+        var promises = files.map(async file => {
+          let url = await app.admin.utils.uploadFile(file);
 
-        // imgix の url に変換
-        let url = `${spat.config.imgix.domain}/${snapshot.ref.fullPath}?auto=format,compress`;
+          url += '?auto=format';
 
-        this.insertText(`![](${url})\n`);
+          return url;
+        });
+        var urls = await Promise.all(promises);
+
+        // markdown 形式に変換してつなげる
+        var images_text = urls.map(url => `![](${url})`).join('\n');
+
+        // textarea に追加
+        this.insertText(images_text);
 
         i.close();
       };
@@ -234,10 +243,11 @@ admin-field-image
     this.getValue = async () => {
       if (!this.file) return;
 
-      var {url} = await app.utils.uploadFile(this.file);
+      let url = await app.admin.utils.uploadFile(this.file);
+
       return {
         url,
-      }
+      };
     };
 
     //- image以外ならfalseを返す

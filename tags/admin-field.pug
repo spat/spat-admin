@@ -22,6 +22,46 @@ admin-field-textarea
     }
   
   script.
+    this.on('mount', () => {
+      this.refs.input.ondragover = (e) => { return false; };
+      this.refs.input.ondrop = async (e) => {
+        e.preventDefault();
+
+        var i = spat.modal.indicator();
+
+        // ファイルをすべてアップロードして url を取得
+        var files = Array.from(e.dataTransfer.files);
+        var promises = files.map(async file => {
+          let url = await app.admin.utils.uploadFile(file);
+
+          url += '?auto=format';
+
+          return url;
+        });
+        var urls = await Promise.all(promises);
+
+        // markdown 形式に変換してつなげる
+        var images_text = urls.map(url => `![](${url})`).join('\n');
+
+        // textarea に追加
+        this.insertText(images_text);
+
+        i.close();
+      };
+    });
+
+    this.insertText = (text) => {
+      let input = this.refs.input;
+      let cursorPosition = input.selectionStart;
+
+      let before = input.value.substr(0, cursorPosition);
+      let after = input.value.substr(cursorPosition);
+
+      input.value = before + text + after;
+
+      input.selectionStart = input.selectionEnd = cursorPosition + text.length;
+    };
+
     this.getValue = () => {
       return this.refs.input.value;
     };
@@ -203,10 +243,11 @@ admin-field-image
     this.getValue = async () => {
       if (!this.file) return;
 
-      var url = await app.utils.uploadFile(this.file);
+      let url = await app.admin.utils.uploadFile(this.file);
+
       return {
-        url: url,
-      }
+        url,
+      };
     };
 
     //- image以外ならfalseを返す

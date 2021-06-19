@@ -4,7 +4,7 @@ admin-module-list
     thead
       tr
         th.border-bottom(each='{heading in schema.headings}', style='width: {heading.width}')
-          div.w-full.text-center.fs11.text-gray.py16 {heading.label}
+          div.w-full.text-left.fs11.text-gray.px12.py16.bold {heading.label}
     tbody
       tr.border-bottom.hover-trigger.hover-bg-dark.cursor-pointer(each='{item in items}', onclick='{onSelect}')
         td.p12(each='{heading in schema.headings}')

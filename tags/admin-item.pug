@@ -1,5 +1,17 @@
 admin-item-text
-  p.line-clamp-1 {opts.riotValue}
+  p.line-clamp-1 {text || opts.riotValue}
+
+  script.
+    this.on('mount', () => {
+      let options = this.opts.heading.options;
+      if (options) {
+        let mappings = options.mappings;
+        if (mappings && mappings[opts.riotValue]) {
+          this.text = mappings[opts.riotValue];
+          this.update();
+        }
+      }
+    });
 
 admin-item-date
   p(if='{!opts.riotValue}') -

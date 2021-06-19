@@ -1,5 +1,7 @@
 //- 一覧用パーツ
 admin-module-list
+  div.h80.f.fr.fm.p16.border-bottom
+    input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedFetch}')
   table.table-layout-fixed.w-full.border-spacing-0.border-collapse-collapse
     thead
       tr
@@ -23,10 +25,9 @@ admin-module-list
       var schema = admin.utils.$get(app.admin.schema, schema_path) || app.admin.schema[this.collection+'/'+this.id];
       this.schema = schema;
 
-      var items = await app.admin.crud.index({path});
+      this.path = path;
 
-      this.items = items;
-      this.update();
+      await this.fetch();
     };
 
     this.getList = () => {
@@ -45,4 +46,14 @@ admin-module-list
       //- 遷移
       spat.router.push(`${root}${e.item.item.path}`);
     };
-  
+
+    this.fetch = async () => {
+      var query = this.refs.search.value;
+      var items = await app.admin.crud.index({path: this.path, keyword: query});
+      this.items = items;
+      this.update();
+    };
+    
+    this.debouncedFetch = _.debounce((e) => {
+      this.fetch();
+    }, 100);

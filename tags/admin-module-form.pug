@@ -1,5 +1,5 @@
 admin-module-form
-  form#form1.p32(ref='form', onsubmit='{onSubmit}')
+  form#form1.p32(if='{visible}', ref='form', onsubmit='{onSubmit}')
     div.block.mb32(each='{field in schema.fields}')
       div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}')
 
@@ -12,6 +12,8 @@ admin-module-form
     }
   
   script.
+    this.visible = true;
+
     this.setup = async ({path}) => {
       // フルパス
       this.path = path;
@@ -29,6 +31,9 @@ admin-module-form
 
         this.item = item;
       }
+      else {
+        this.reset();
+      }
 
       // schema を取得
       // collection もしくは collection/id に一致するスキーマ
@@ -37,6 +42,12 @@ admin-module-form
       this.schema = schema;
 
       this.update();
+    };
+
+    this.reset = () => {
+      // form を非表示/表示することで内容をリセット
+      this.update({visible: false});
+      this.update({visible: true});
     };
 
     this.submit = () => {

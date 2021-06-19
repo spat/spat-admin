@@ -360,7 +360,6 @@ admin-field-collection
   div
     button.button(type='button', onclick='{onOpenModal}') {isMultiple() ? '追加' : '設定'}
 
-
   style(type='less').
     :scope {
       display: block;
@@ -370,7 +369,6 @@ admin-field-collection
     }
 
   script.
-
     this.on('mount', async () => {
       // 複数選択
       if (this.isMultiple()) {

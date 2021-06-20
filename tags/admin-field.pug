@@ -452,3 +452,27 @@ admin-field-collection
     this.isMultiple = () => {
       return this.opts.field.options.multiple;
     };
+
+admin-field-button
+  button.button(type='button', onclick='{onClick}') {this.opts.field.label}
+
+  style(type='less').
+    :scope {
+      display: block;
+      .cursor-grab {
+        cursor: grab;
+      }
+    }
+
+  script.
+    this.onClick = (e) => {
+      let onclick = this.opts.field.options.onclick;
+
+      if (onclick) {
+        onclick({
+          tag: this,
+          field: this.opts.field,
+          item: this.opts.item,
+        });
+      }
+    };

@@ -7,4 +7,4 @@ admin-module-menu
       div.bold.fs12.mb8 {section.label}
       div
         div.hover-trigger.hover-bg-light.rounded-8.pl8(each='{item in section.items}')
-          a.p8.block(href='{item.link}') {item.label}
+          a.p8.block(href='{item.link}', class='{"rounded-top-left-full rounded-bottom-left-full bg-whitesmoke pl16 bold text-gray mrn16 mln8": location.pathname.indexOf(item.link) === 0}') {item.label}

@@ -114,5 +114,22 @@ admin-module-form
 
       this.update();
 
-      spat.toast.message('保存');
+      spat.toast.message('保存しました!');
     };
+
+    this.del = async () => {
+      let result = await spat.modal.confirm('本当に削除しますか？');
+
+      if (!result) return ;
+
+      // 削除
+      await app.admin.crud.del({
+        path: this.path,
+      });
+
+      spat.toast.message('削除しました!');
+
+      spat.router.replace(`/${this.collection}`);
+    };
+
+

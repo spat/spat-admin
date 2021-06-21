@@ -1,6 +1,6 @@
 //- 一覧用パーツ
 admin-module-list
-  div.h80.f.fr.fm.p16.border-bottom
+  div.h80.f.fr.fm.p16.border-bottom(show='{schema.search !== false}')
     input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedFetch}')
   table.table-layout-fixed.w-full.border-spacing-0.border-collapse-collapse
     thead

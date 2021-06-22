@@ -23,7 +23,7 @@ admin-module-list
   script.
     this.setup = async ({path}) => {
       this.items = [];
-      this.nextCursor = '';
+      this.next_cursor = '';
       
       // schema を取得
       // collection もしくは collection/id に一致するスキーマ
@@ -55,7 +55,11 @@ admin-module-list
 
     this.fetch = async () => {
       var query = this.refs.search.value;
-      var {items, next_cursor} = await app.admin.crud.index({path: this.path, keyword: query, cursor: this.next_cursor});
+      var {items, next_cursor} = await app.admin.crud.index({
+        path: this.path,
+        keyword: query,
+        cursor: this.next_cursor
+      });
       this.items.push(...items);
       this.next_cursor = next_cursor;
       this.update();

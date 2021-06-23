@@ -17,10 +17,11 @@ admin-modal-collection.f.fh
 
     // 候補一覧を更新
     this.syncCandidates = async () => {
-      this.candidates = await app.admin.crud.index({
+      var res = await app.admin.crud.index({
         path: `${this.opts.options.collection}`,
         keyword: this.refs.search.value,
       });
+      this.candidates = res.items;
       this.update();
     };
 

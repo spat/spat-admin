@@ -11,6 +11,9 @@ admin-module-list
       tr.border-bottom.hover-trigger.hover-bg-dark.cursor-pointer(each='{item in items}', onclick='{onSelect}')
         td.p12(each='{heading in schema.headings}')
           div.fs13(data-is='admin-item-{heading.type}', value='{admin.utils.$get(item, heading.key)}', heading='{heading}')
+  //-  もっと見る
+  div.f.fh.py10(if='{next_cursor}')
+    button.button(onclick='{fetch}') もっと見る
 
   style(type='less').
     :scope {
@@ -19,6 +22,9 @@ admin-module-list
 
   script.
     this.setup = async ({path}) => {
+      this.items = [];
+      this.next_cursor = '';
+      
       // schema を取得
       // collection もしくは collection/id に一致するスキーマ
       var schema_path = path.split('/').filter((path, index) => { return index%2 === 0; } ).join('.'); // id を取り除く
@@ -31,7 +37,7 @@ admin-module-list
     };
 
     this.getList = () => {
-      var list = Object.assing(app.admin)
+      var list = Object.assign(app.admin);
     };
 
     this.onSelect = (e) => {
@@ -49,11 +55,16 @@ admin-module-list
 
     this.fetch = async () => {
       var query = this.refs.search.value;
-      var items = await app.admin.crud.index({path: this.path, keyword: query});
-      this.items = items;
+      var {items, next_cursor} = await app.admin.crud.index({
+        path: this.path,
+        keyword: query,
+        cursor: this.next_cursor
+      });
+      this.items.push(...items);
+      this.next_cursor = next_cursor;
       this.update();
     };
-    
+
     this.debouncedFetch = _.debounce((e) => {
       this.fetch();
     }, 100);

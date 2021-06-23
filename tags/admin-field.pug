@@ -311,10 +311,11 @@ admin-field-list
 
 //-     // 候補一覧を更新
 //-     this.syncCandidates = async () => {
-//-       this.candidates = await app.admin.crud.index({
+//-       var res = await app.admin.crud.index({
 //-         path: `${this.opts.field.options.collection}`,
 //-         keyword: this.refs.input.value,
 //-       });
+          this.candidates = res.items;
 //-       this.update();
 //-     };
 

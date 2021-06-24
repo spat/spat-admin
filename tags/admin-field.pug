@@ -187,8 +187,8 @@ admin-field-switch
 
 admin-field-image
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  div.bg-gray_pale.relative.w300.h200.border.rounded-4.cursor-pointer.mb4(onclick='{onSelectImage}')
-    img.s-full.object-fit-contain(if="{url || opts.riotValue.url}", src='{url || opts.riotValue.url}')
+  div.bg-gray_pale.relative.w-full.h-auto.cursor-pointer.mb4(onclick='{onSelectImage}')
+    img.s-full.object-fit-contain.border(if="{url || opts.riotValue.url}", src='{url || opts.riotValue.url}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
   div.fs10.mb16 クリック または ドラッグ&ドロップで追加できます
   

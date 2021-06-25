@@ -29,5 +29,9 @@ admin-item-date
     }
 
 admin-item-image
-  img(src='{opts.riotValue.url}')
+  img(src='{opts.riotValue}')
   
+  style(type='less').
+    :scope {
+      display: block;
+    }

@@ -187,14 +187,17 @@ admin-field-switch
 
 admin-field-image
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  div.bg-gray_pale.relative.w-full.h-auto.cursor-pointer.mb4(onclick='{onSelectImage}')
-    img.s-full.object-fit-contain.border(if="{url || opts.riotValue.url}", src='{url || opts.riotValue.url}')
+  div.bg-gray_pale.relative.w-full.h-auto.max-width-500.cursor-pointer.mb4(onclick='{onSelectImage}')
+    img.s-full.object-fit-contain.border(if="{url || opts.riotValue}", src='{url || opts.riotValue}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
   div.fs10.mb16 クリック または ドラッグ&ドロップで追加できます
   
   style(type='less').
     :scope {
       display: block;
+      .max-width-500 {
+        max-width: 500px;
+      }
     }
 
   script.
@@ -245,9 +248,7 @@ admin-field-image
 
       let url = await app.admin.utils.uploadFile(this.file);
 
-      return {
-        url,
-      };
+      return url;
     };
 
     //- image以外ならfalseを返す

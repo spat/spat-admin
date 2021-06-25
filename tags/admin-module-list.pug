@@ -24,9 +24,8 @@ admin-module-list
 
   script.
     this.setup = async ({path}) => {
-      this.items = [];
-      this.next_cursor = '';
-      
+      this.reset();
+
       // schema を取得
       // collection もしくは collection/id に一致するスキーマ
       var schema_path = path.split('/').filter((path, index) => { return index%2 === 0; } ).join('.'); // id を取り除く
@@ -36,6 +35,11 @@ admin-module-list
       this.path = path;
 
       await this.fetch();
+    };
+
+    this.reset = () => {
+      this.items = [];
+      this.next_cursor = '';
     };
 
     this.getList = () => {
@@ -68,5 +72,9 @@ admin-module-list
     };
 
     this.debouncedFetch = _.debounce((e) => {
+      // 検索するたびリセット
+      this.reset();
+
+      // fetch
       this.fetch();
     }, 100);

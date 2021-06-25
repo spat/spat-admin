@@ -3,15 +3,16 @@ admin-module-list
   div.h80.f.fr.fm.p16.border-bottom(show='{schema.search !== false}')
     input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedFetch}')
   div.overflow-x-scroll
-    table.w-full.table-layout-fixed.w-full.border-spacing-0.border-collapse-collapse
+    table.w-full.w-full.border-spacing-0.border-collapse-collapse
       thead
         tr
-          th.border-bottom(each='{heading in schema.headings}', style='width: {heading.width || "100%"}')
+          th.border-bottom(each='{heading in schema.headings}', style='min-width: {heading.width || "100px"}; width: {heading.width || "100%"}')
             div.w-full.text-left.fs11.text-gray.px12.py16.bold {heading.label}
       tbody
         tr.border-bottom.hover-trigger.hover-bg-dark.cursor-pointer(each='{item in items}', onclick='{onSelect}')
           td.p12(each='{heading in schema.headings}')
             div.fs13(data-is='admin-item-{heading.type}', value='{admin.utils.$get(item, heading.key)}', heading='{heading}')
+
     //-  もっと見る
     div.f.fh.py10(if='{next_cursor}')
       button.button(onclick='{fetch}') もっと見る

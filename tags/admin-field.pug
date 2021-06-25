@@ -1,6 +1,6 @@
 admin-field-text
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  input.input.w-full(ref='input', type='text', value='{opts.riotValue}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
+  input.input.w-full(ref='input', type='text', value='{opts.riotValue.toString()}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
 
   style(type='less').
     :scope {
@@ -9,7 +9,13 @@ admin-field-text
   
   script.
     this.getValue = () => {
-      return this.refs.input.value;
+      var value = this.refs.input.value;
+      if (Array.isArray(opts.riotValue)) {
+        return value.split(',').map(s => s.trim());
+      }
+      else {
+        return value;
+      }
     };
 
 admin-field-textarea

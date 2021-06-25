@@ -1,6 +1,6 @@
 admin-module-form
   form#form1.row.mxn16(if='{visible}', ref='form', onsubmit='{onSubmit}')
-    div.mb32(each='{form in schema.forms}', class='{form.class}')
+    div.mb32.s-w-full(each='{form in schema.forms}', class='{form.class}')
       div.box-shadow.rounded-4.bg-white.p32.mx16
         div.mb16
           div.fs18.bold.mb8 {form.label}

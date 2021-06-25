@@ -247,7 +247,7 @@ admin-field-image
     };
 
     this.getValue = async () => {
-      if (!this.file) return;
+      if (!this.file) return opts.riotValue;
 
       let url = await app.admin.utils.uploadFile(this.file);
 

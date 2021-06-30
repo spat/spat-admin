@@ -29,7 +29,8 @@ admin-item-date
     }
 
 admin-item-image
-  img(src='{opts.riotValue}')
+  div.rect-ogp.bg-whitesmoke.border
+    img.s-full.object-fit-contain(if='{opts.riotValue}', src='{opts.riotValue}')
   
   style(type='less').
     :scope {

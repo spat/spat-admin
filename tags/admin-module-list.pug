@@ -63,12 +63,12 @@ admin-module-list
 
     this.fetch = async () => {
       var keyword = this.refs.search.value;
-      var query = {};
+      var filters = {};
 
       if (this.refs.filters) {
-        var filters = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
-        filters.forEach(filter => {
-          query[filter.opts.filter.key] = filter.getValue();
+        var filters_tag = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
+        filters_tag.forEach(tag => {
+          filters[tag.opts.filter.key] = tag.getValue();
         });
       }
 
@@ -76,7 +76,7 @@ admin-module-list
         path: this.path,
         cursor: this.next_cursor,
         keyword,
-        query,
+        filters,
       });
       this.items.push(...items);
       this.next_cursor = next_cursor;

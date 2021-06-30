@@ -1,0 +1,13 @@
+admin-module-header
+  div.bg-white.p16.box-shadow.relative
+    div.f.fbw.fm
+      div.f.fm
+        a.mr8(href='/') <
+        h1.fs20 {opts.schema.label}
+      div(if='{canCreate()}')
+        a.button.primary(href='/{opts.collection}/new') NEW
+    
+  script.
+    this.canCreate = () => {
+      return opts.schema.crud && opts.schema.crud.create;
+    };

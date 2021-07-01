@@ -1,6 +1,8 @@
 //- 一覧用パーツ
 admin-module-list
-  div.h80.f.fr.fm.p16.border-bottom(show='{schema.search !== false}')
+  div.h80.f.fbw.fm.p16.border-bottom(show='{schema.search !== false}')
+    div.f.fm
+      div.mr16(ref='filters', each='{filter in schema.filters}', data-is='admin-module-list-filter_', filter='{filter}', onchange='{search}')
     input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedFetch}')
   div.overflow-x-scroll
     table.w-full.w-full.border-spacing-0.border-collapse-collapse
@@ -60,21 +62,73 @@ admin-module-list
     };
 
     this.fetch = async () => {
-      var query = this.refs.search.value;
+      var keyword = this.refs.search.value;
+      var filters = {};
+
+      if (this.refs.filters) {
+        var filters_tag = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
+        filters_tag.forEach(tag => {
+          filters[tag.opts.filter.key] = tag.getValue();
+        });
+      }
+
       var {items, next_cursor} = await app.admin.crud.index({
         path: this.path,
-        keyword: query,
-        cursor: this.next_cursor
+        cursor: this.next_cursor,
+        keyword,
+        filters,
       });
       this.items.push(...items);
       this.next_cursor = next_cursor;
       this.update();
+      
+
     };
 
-    this.debouncedFetch = _.debounce((e) => {
+    this.search = () => {
       // 検索するたびリセット
       this.reset();
 
       // fetch
       this.fetch();
+    };
+
+    this.debouncedFetch = _.debounce((e) => {
+      this.search();
     }, 512);
+
+
+admin-module-list-filter_
+  div.text-center
+    div.fs11.bold.mb4 {opts.filter.label}
+    select.px8.py8.border.rounded-4(ref='filter', onchange='{opts.onchange}')
+      option(value='----') ----
+      option(each='{option in options}', value='{option.value}') {option.label}
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.on('mount', async () => {
+      let options = opts.filter.options;
+
+      // 関数だったら実行した返り値を使う
+      if (typeof options === 'function') {
+        options = options();
+
+        // promise だったら待つ
+        if (options instanceof Promise) {
+          options = await options;
+        }
+      }
+
+      this.update({
+        options,
+      });
+    });
+
+    this.getValue = () => {
+      return this.refs.filter.value !== '----' ? this.refs.filter.value : '';
+    };

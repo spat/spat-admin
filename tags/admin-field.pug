@@ -466,7 +466,8 @@ admin-field-collection
         return values;
       }
       else {
-        return this.getItemValue(this.items[0]);
+        //- リセットしたいときは空文字を送る
+        return this.items[0] ? this.getItemValue(this.items[0]) : '';
       }
     };
 

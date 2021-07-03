@@ -1,13 +1,49 @@
 admin-module-header
-  div.bg-white.p16.box-shadow.relative
-    div.f.fbw.fm
+  div.bg-white.box-shadow.relative
+    div.h60.f.fbw.fm.px16
       div.f.fm
-        a.mr8(href='/') <
-        h1.fs20 {opts.schema.label}
+        div.f.fm.item(each='{item in getBreadcrumbs()}')
+          a.fs16.bold(href='{item.link}') {item.label}
+          div.text-gray.arrow.mx8 >
       div(if='{canCreate()}')
         a.button.primary(href='/{opts.collection}/new') NEW
-    
+
+  style(type='less').
+    :scope {
+      display: block;
+
+      .item:last-child .arrow {
+        display: none;
+      }
+    }
+
   script.
+    this.on('mount', () => {
+
+    });
+
     this.canCreate = () => {
       return opts.schema.crud && opts.schema.crud.create;
+    };
+
+    this.getBreadcrumbs = () => {
+      let items = [
+        {
+          label: 'TOP',
+          link: '/',
+        },
+      ];
+
+      if (this.opts.schema) {
+        items.push({
+          label: opts.schema.label,
+          link: `/${opts.collection}`,
+        });
+      }
+      return items;
+    };
+
+    // 最後のアイテムかどうかを判定
+    this.isLast = (index) => {
+      return this.opts.items.length-1 <= index;
     };

@@ -84,7 +84,7 @@ admin-field-textarea
 
 admin-field-date
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  input.input.w-full(ref='datetimepicker', required='{opts.option.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
+  input.input.w-full(ref='datetimepicker', required='{opts.option.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', tabindex='{opts.field.options.readonly ? -1 : 0}', class='{"bg-whitesmoke border-transparent pointer-none": opts.field.options.readonly}')
 
   style(type='less').
     :scope {
@@ -466,7 +466,8 @@ admin-field-collection
         return values;
       }
       else {
-        return this.getItemValue(this.items[0]);
+        //- リセットしたいときは空文字を送る
+        return this.items[0] ? this.getItemValue(this.items[0]) : '';
       }
     };
 

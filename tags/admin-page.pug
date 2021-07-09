@@ -1,0 +1,51 @@
+admin-page.s-full
+  div.s-full.f.fh
+    div.h-full.w200.flex-fixed.s-hide(data-is='admin-module-menu', menu='{app.admin.menu}', logo='{"/images/logo_color.png"}')
+    div.s-full.f.flex-column.overflow-hidden
+      header(data-is='admin-module-header', path='{path}', list='{refs.list}', form='{refs.form}')
+      div.p32.overflow-y-scroll.s-p16
+        div(if='{type === "list"}')
+          div.box-shadow.rounded-4.bg-white(ref='list', data-is='admin-module-list')
+        div(if='{type === "form"}')
+          div(ref='form', data-is='admin-module-form')
+  
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.setup = async ({path}) => {
+      // 先頭のスラッシュは取り除く
+      path = path[0] === '/' ? path.slice(1) : path;
+
+      if (!path) return ;
+      
+
+      this.path = path;
+
+      let pathes = path.split('/');
+
+      // リストページ
+      if (pathes.length % 2 === 1) {
+        this.update({type:'list'});
+        await this.refs.list.setup({
+          path: path,
+        });
+        this.schema = this.refs.list.schema;
+      }
+      // フォームページ
+      else {
+        this.update({type:'form'});
+        await this.refs.form.setup({
+          path: path,
+        });
+        this.schema = this.refs.form.schema;
+      }
+
+      this.update();
+    };
+
+    this.canCreate = () => {
+      return this.refs.list.schema.crud && this.refs.list.schema.crud.create;
+    };

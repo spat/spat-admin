@@ -1,0 +1,83 @@
+admin-module-header
+  div.bg-white.box-shadow.relative
+    div.h60.f.fbw.fm.px16
+      div.f.fm
+        div.f.fm.item(each='{item in getBreadcrumbs()}')
+          a.fs16.bold(href='{item.link}') {item.label}
+          div.text-gray.arrow.mx8 >
+      div.f.fm(if='{opts.list}')
+        div.ml8(if='{canCreate()}')
+          a.button.primary(href='/{opts.path}/new') NEW
+      div.f.fm(if='{opts.form}')
+        div.ml8(if='{canDelete()}')
+          button.button.danger.py6(type='button', onclick='{onDelete}')
+            i.fs18.material-icons delete
+        div.ml8(if='{canUpdate()}')
+          button.primary.button(onclick='{onSubmit}') SAVE
+
+  style(type='less').
+    :scope {
+      display: block;
+
+      .item:last-child .arrow {
+        display: none;
+      }
+    }
+
+  script.
+    this.on('mount', () => {
+
+    });
+
+    this.getBreadcrumbs = () => {
+      let items = [
+        {
+          label: 'TOP',
+          link: '/',
+        },
+      ];
+
+      if (this.opts.list) {
+        items.push({
+          label: this.opts.list.schema.label,
+          link: `/${opts.path}`,
+        });
+      }
+      else if (this.opts.form) {
+        items.push({
+          label: this.opts.form.schema.label,
+          link: `/${this.opts.form.collection}`,
+        });
+        items.push({
+          label: this.opts.form.id,
+          link: `/${this.opts.form.path}`,
+        });
+      }
+
+      return items;
+    };
+
+    // 最後のアイテムかどうかを判定
+    this.isLast = (index) => {
+      return this.opts.items.length-1 <= index;
+    };
+
+    this.onSubmit = () => {
+      this.opts.form.submit();
+    };
+
+    this.onDelete = () => {
+      this.opts.form.del();
+    };
+
+    this.canCreate = () => {
+      return opts.list && opts.list.schema.crud && opts.list.schema.crud.create;
+    };
+
+    this.canUpdate = () => {
+      return opts.form && opts.form.schema.crud && opts.form.schema.crud.update;
+    };
+
+    this.canDelete = () => {
+      return opts.form && opts.form.schema.crud && opts.form.schema.crud.delete;
+    };

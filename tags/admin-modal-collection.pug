@@ -27,7 +27,7 @@ admin-modal-collection.f.fh
 
     this.debouncedSyncCandidates = _.debounce((e) => {
       this.syncCandidates();
-    }, 100);
+    }, 512);
 
     this.getItemValue = (item) => {
       return admin.utils.$get(item, this.opts.options.value_key);

@@ -8,6 +8,7 @@ admin-page.s-full
           div.box-shadow.rounded-4.bg-white(ref='list', data-is='admin-module-list')
         div(if='{type === "form"}')
           div(ref='form', data-is='admin-module-form')
+        #{'yield'}
   
   style(type='less').
     :scope {

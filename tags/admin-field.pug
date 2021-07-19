@@ -106,7 +106,8 @@ admin-field-date
 
     this.getValue = () => {
       var datetime = dayjs(this.refs.datetimepicker.value.valueOf());
-      return +datetime;
+      //- 何も入力していなければNaNになるので値を0にする
+      return +datetime || 0;
     };
 
 // TODO:

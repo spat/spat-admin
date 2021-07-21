@@ -1,7 +1,10 @@
 admin-modal-collection.f.fh
   div.f.flex-column.bg-white.w80vw.h80vh.rounded-8(ref='modal')
-    div.h80.f.fr.fm.p16.border-bottom
-      input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedSyncCandidates}')
+    form.h80.f.fr.fm.p16.border-bottom(onsubmit='{onSearch}')
+      div.f
+        input.input.mr8(ref='search', type='search', placeholder='Search')
+        button.button 検索
+
     div.p16.overflow-scroll.h-full.bg-whitesmoke
       button.block.w-full.text-left.p8.border.rounded-4.bg-white.hover-trigger.hover-bg-dark.mb8(type='button', each='{item, index in candidates}', value='{getItemValue(item)}', onclick='{onSelect}') {index}. {getItemLabel(item)}
 
@@ -25,9 +28,10 @@ admin-modal-collection.f.fh
       this.update();
     };
 
-    this.debouncedSyncCandidates = _.debounce((e) => {
+    this.onSearch = (e) => {
+      e.preventDefault();
       this.syncCandidates();
-    }, 512);
+    };
 
     this.getItemValue = (item) => {
       return admin.utils.$get(item, this.opts.options.value_key);

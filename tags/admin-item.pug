@@ -7,13 +7,29 @@ admin-item-text
     }
 
   script.
-    this.on('mount', () => {
+    this.on('mount', async () => {
       let options = this.opts.heading.options;
       if (options) {
         // マッピングの反映
         let mappings = options.mappings;
         if (mappings && mappings[opts.riotValue]) {
           this.text = mappings[opts.riotValue];
+          this.update();
+        }
+        // getValue がある場合
+        let getValue = options.getValue;
+        if (getValue) {
+          let result = getValue({
+            tag: this,
+            value: this.opts.riotValue,
+            item: this.opts.item,
+          });
+          // 非同期を考慮
+          if (result instanceof Promise) {
+            result = await result;
+          }
+
+          this.text = result;
           this.update();
         }
       }

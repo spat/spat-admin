@@ -3,7 +3,10 @@ admin-module-list
   div.h80.f.fbw.fm.p16.border-bottom(show='{schema.search !== false}')
     div.f.fm
       div.mr16(ref='filters', each='{filter in schema.filters}', data-is='admin-module-list-filter_', filter='{filter}', onchange='{search}')
-    input.input(ref='search', type='search', placeholder='Search', oninput='{debouncedFetch}')
+    form(onsubmit='{onSearch}')
+      div.f
+        input.input.mr8(ref='search', type='search', placeholder='Search')
+        button.button 検索
   div.overflow-x-scroll
     table.w-full.w-full.border-spacing-0.border-collapse-collapse
       thead
@@ -93,10 +96,10 @@ admin-module-list
       this.fetch();
     };
 
-    this.debouncedFetch = _.debounce((e) => {
+    this.onSearch = (e) => {
+      e.preventDefault();
       this.search();
-    }, 512);
-
+    };
 
 admin-module-list-filter_
   div.text-center

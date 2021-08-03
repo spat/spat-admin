@@ -84,7 +84,7 @@ admin-field-textarea
 
 admin-field-date
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  input.input.w-full(ref='datetimepicker', required='{opts.option.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', tabindex='{opts.field.options.readonly ? -1 : 0}', class='{"bg-whitesmoke border-transparent pointer-none": opts.field.options.readonly}')
+  input.input.w-full(ref='datetimepicker', required='{opts.field.options.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', tabindex='{opts.field.options.readonly ? -1 : 0}', class='{"bg-whitesmoke border-transparent pointer-none": opts.field.options.readonly}')
 
   style(type='less').
     :scope {
@@ -121,7 +121,7 @@ admin-field-markdown
 
 admin-field-select
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  select.select.px16.py12.pr40(ref='input')
+  select.select.px16.py12.pr40(ref='input', required='{opts.field.options.required}')
     option(each='{choice in choices}', value='{choice.value}') {choice.label || choice.value}
 
   style(type='less').

@@ -1,6 +1,6 @@
 admin-field-text
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  input.input.w-full(ref='input', type='text', value='{opts.riotValue.toString()}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
+  input.input.w-full(ref='input', type='text', value='{opts.riotValue.toString()}', required='{opts.field.options.required}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
 
   style(type='less').
     :scope {

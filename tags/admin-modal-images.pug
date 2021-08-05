@@ -76,7 +76,7 @@ admin-modal-images.f.fh.p64(spat-animation='push')
       this.images = images.items;
 
       if (!this.current) {
-        this.current = images[0];
+        this.current = images.items[0];
       }
       this.update();
     };
@@ -110,14 +110,11 @@ admin-modal-images.f.fh.p64(spat-animation='push')
         alt: this.refs.alt.value,
         description: this.refs.description.value,
       });
-      // url から image を post
       var res = await app.admin.crud.put({
         path: `assets/${this.current.id}`,
         data
       });
-
       this.current.data = res.data;
-
       spat.toast.message('update image');
     };
 

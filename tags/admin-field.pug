@@ -82,6 +82,30 @@ admin-field-textarea
       return this.refs.input.value;
     };
 
+admin-field-array
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  //- string, number
+  input.input.w-full(if='{getInputType() === "string" || getInputType() === "number"}' ref='inputs', type='{opts.field.options.type}', each='{value in opts.riotValue}', value='{value}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
+  //- TODO: object
+  div(if='{getInputType() === "object"}')
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+  
+  script.
+    this.getValue = () => {
+      $inputs = this.refs.inputs;
+      if (!$inputs) return;
+
+      return $inputs.map(input => input.value.trim());
+    };
+
+    this.getInputType = () => {
+      return opts.field.options.type;
+    };
+
 admin-field-date
   div.fs11.bold.text-gray.mb8 {opts.field.label}
   input.input.w-full(ref='datetimepicker', required='{opts.field.options.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', tabindex='{opts.field.options.readonly ? -1 : 0}', class='{"bg-whitesmoke border-transparent pointer-none": opts.field.options.readonly}')

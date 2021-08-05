@@ -252,9 +252,19 @@ admin-field-image
       };
     });
 
-    this.onSelectImage = (e) => {
+    this.onSelectImage = async (e) => {
       e.preventDefault();
-      this.input.click();
+      if (location.pathname.indexOf('/assets/') !== -1) {
+        this.input.click();
+      }
+      else {
+        var modal = spat.modal.open('admin-modal-images');
+        var item = await modal.waitClose();
+        if (item) {
+          this.url = item.data.image.url;
+          this.update();
+        }
+      }
     };
 
     this._setFile = async (file) => {

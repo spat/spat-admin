@@ -1,0 +1,154 @@
+admin-modal-images.f.fh.p64(spat-animation='push')
+  div.s-full.bg-white.modal.rounded-6.f.flex-column(ref='modal', onclick='{stop}')
+    div.p16.border-bottom.fs16.bold 画像を選択
+
+    div.s-full.f.overflow-scroll
+      div.flex-auto.p16
+        div.row.align-content-baseline
+          div.square.col2.cursor-pointer
+            div.p4
+              div.s-full.object-fit-contain.border.bg-ghostwhite.f.fh(onclick='{onUploadImage}')
+                span.fs64 +
+          div.square.col2.cursor-pointer(each='{image in images}', onclick='{selectImage}')
+            div.p4
+              img.s-full.object-fit-contain.border.bg-ghostwhite(src='{image.data.image.sizes ? image.data.image.sizes.thumbnail.url : image.data.image.url}', class='{"border-primary border-width-4": current === image}')
+      form.flex-fixed.w300.p16.border-left.sticky.t0.overflow-scroll
+        div.relative
+          div.w-full.mb8
+            img.bg-ghostwhite.border(src='{current.data.image.url}')
+          button.absolute.t4.r4.button.p8(if='{current}', type='button', onclick='{deleteImage}')
+            i.material-icons delete
+          
+        label.block.mb8
+          div.fs12.bold.mb4 slug
+          input.input.w-full(ref='slug', type='text', value='{current.data.slug}')
+          
+        label.block.mb8
+          div.fs12.bold.mb4 alt text
+          input.input.w-full(ref='alt', type='text', value='{current.data.alt}')
+
+        label.block.mb8
+          div.fs12.bold.mb4 備考
+          textarea.input.w-full(ref='description', rows=4) {current.data.description}
+        div.f.fr
+          button.button(onclick='{updateImage}') 更新
+    div.f.fr.p16.border-top
+      button.button(onclick='{submit}') {location.pathname === '/admin/images'? '閉じる' : '選択'}
+
+  style(type='less').
+    :scope {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+  script.
+    this.on('mount', () => {
+      this.syncImages();
+
+      this.root.ondragover = (e) => { return false; };
+      this.root.ondrop = (e) => {
+        var files = Array.from(e.dataTransfer.files);
+
+        // 複数画像がある場合を考慮
+        files.forEach(file => {
+          this.uploadImage(file);
+        });
+
+        return false;
+      };
+
+      // form から画像をアップロード
+      this.imageInput = document.createElement('input');
+      this.imageInput.type = 'file';
+      this.imageInput.setAttribute('accept', 'image/*');
+      this.imageInput.setAttribute('multiple', 'multiple');
+      this.imageInput.onchange = (e) => {
+        var files = Object.values(e.target.files);
+        // 複数画像がある場合を考慮
+        files.forEach(file => {
+          this.uploadImage(file);
+        });
+      };
+    });
+
+    this.syncImages = async () => {
+      var images = await app.admin.crud.index({path: 'assets'});
+
+      this.images = images.items;
+
+      if (!this.current) {
+        this.current = images[0];
+      }
+      this.update();
+    };
+
+    this.uploadImage = async (file) => {
+      var data = {};
+      var indicator = spat.modal.indicator();
+      var url = await app.admin.utils.uploadFile(file);
+      admin.utils.$set(data, 'data', {
+        image: {
+          url
+        }
+      });
+      await app.admin.crud.post({
+        path: 'assets',
+        data,
+      });
+      indicator.close();
+
+      this.syncImages();
+    };
+
+    this.onUploadImage = () => {
+      this.imageInput.click();
+    };
+
+    this.updateImage = async (e) => {
+      var data = {};
+      admin.utils.$set(data, 'data', {
+        slug: this.refs.slug.value,
+        alt: this.refs.alt.value,
+        description: this.refs.description.value,
+      });
+      // url から image を post
+      var res = await app.admin.crud.put({
+        path: `assets/${this.current.id}`,
+        data
+      });
+
+      this.current.data = res.data;
+
+      spat.toast.message('update image');
+    };
+
+    this.stop = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    this.selectImage = (e) => {
+      this.current = e.item.image;
+      this.update();
+    };
+
+    this.submit = () => {
+      this.value = this.current;
+      this.close();
+    };
+
+    this.deleteImage = async (e) => {
+      var result = await spat.modal.confirm('本当に削除しますか？');
+      if (!result) return ;
+
+      var indicator = spat.modal.indicator();
+      var res = await app.admin.crud.del({
+        path: `assets/${this.current.id}`
+      });
+      indicator.close();
+
+      spat.toast.message('deleted!');
+
+      // 再度 sync する
+      this.current = null;
+      this.syncImages();
+    };

@@ -71,7 +71,7 @@ admin-modal-images.f.fh.p64(spat-animation='push')
     });
 
     this.syncImages = async () => {
-      var images = await app.admin.crud.index({path: 'assets'});
+      var images = await app.admin.crud.index({path: this.opts.collection});
 
       this.images = images.items;
 
@@ -91,7 +91,7 @@ admin-modal-images.f.fh.p64(spat-animation='push')
         }
       });
       await app.admin.crud.post({
-        path: 'assets',
+        path: this.opts.collection,
         data,
       });
       indicator.close();
@@ -111,7 +111,7 @@ admin-modal-images.f.fh.p64(spat-animation='push')
         description: this.refs.description.value,
       });
       var res = await app.admin.crud.put({
-        path: `assets/${this.current.id}`,
+        path: `${this.opts.collection}/${this.current.id}`,
         data
       });
       this.current.data = res.data;
@@ -139,7 +139,7 @@ admin-modal-images.f.fh.p64(spat-animation='push')
 
       var indicator = spat.modal.indicator();
       var res = await app.admin.crud.del({
-        path: `assets/${this.current.id}`
+        path: `${this.opts.collection}/${this.current.id}`
       });
       indicator.close();
 

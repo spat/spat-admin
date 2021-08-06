@@ -260,7 +260,9 @@ admin-field-image
         this.input.click();
       }
       else {
-        var modal = spat.modal.open('admin-modal-images');
+        var modal = spat.modal.open('admin-modal-images', {
+          collection: 'assets' 
+        });
         var item = await modal.waitClose();
         if (item) {
           this.url = item.data.image.url;

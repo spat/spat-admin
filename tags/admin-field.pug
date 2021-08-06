@@ -82,30 +82,6 @@ admin-field-textarea
       return this.refs.input.value;
     };
 
-admin-field-array
-  div.fs11.bold.text-gray.mb8 {opts.field.label}
-  //- string, number
-  input.input.w-full(if='{getInputType() === "string" || getInputType() === "number"}' ref='inputs', type='{opts.field.options.type}', each='{value in opts.riotValue}', value='{value}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
-  //- TODO: object
-  div(if='{getInputType() === "object"}')
-
-  style(type='less').
-    :scope {
-      display: block;
-    }
-  
-  script.
-    this.getValue = () => {
-      $inputs = this.refs.inputs;
-      if (!$inputs) return;
-
-      return $inputs.map(input => input.value.trim());
-    };
-
-    this.getInputType = () => {
-      return opts.field.options.type;
-    };
-
 admin-field-date
   div.fs11.bold.text-gray.mb8 {opts.field.label}
   input.input.w-full(ref='datetimepicker', required='{opts.field.options.required}', placeholder='{opts.field.options.placeholder}', readonly='{opts.field.options.readonly}', tabindex='{opts.field.options.readonly ? -1 : 0}', class='{"bg-whitesmoke border-transparent pointer-none": opts.field.options.readonly}')
@@ -315,6 +291,75 @@ admin-field-list
       });
     });
 
+//- 配列フォーム
+admin-field-array
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  div.mb8(ref='items')
+    div.p8.border.rounded-4.mb4(each='{item, index in items}')
+      div.f.fm.fbw
+        div.f.fm
+          i.material-icons.mr4.handle.cursor-grab import_export
+          span.mr6 {index}.
+          //- string, number
+          input(type='{opts.field.options.type}', value='{item}')
+          //- TODO: objectはプロパティの数も追加できるように
+        button(type='button', onclick='{onDeleteItem}')
+          i.material-icons.text-gray.fs18 delete
+  div
+    button.button(type='button', onclick='{add}') 追加
+
+  style(type='less').
+    :scope {
+      display: block;
+      .cursor-grab {
+        cursor: grab;
+      }
+    }
+
+  script.
+    this.on('mount', async () => {
+      this.items = this.opts.riotValue;
+      this.update();
+      console.log(this.opts.riotValue)
+
+      // ソート設定
+      Sortable.create(this.refs.items, {
+        animation: 150,
+        handle: '.handle',
+        onEnd: async (e) => {
+          var items = this.items;
+          var temp = items.splice(e.oldIndex, 1)[0];
+          items.splice(e.newIndex, 0, temp);
+          this.update();
+        },
+      });
+    });
+
+    this.add = () => {
+      let item;
+      switch (opts.field.options.type) {
+        case 'string':
+          item = '';
+          break;
+        case 'number':
+          item = 0;
+          break;
+        case 'object':
+          item = {'': ''};
+          break;
+      }
+      this.items.push(item);
+      this.update();
+    };
+
+    this.onDeleteItem = (e) => {
+      this.items = this.items.filter(item => item !== e.item.item);
+      this.update();
+    };
+
+    this.getValue = () => {
+      return this.items;
+    };
 
 //- コレクション選択フォーム(old)
 //- datalist 使ってたやつだけど微妙だったのでモーダル版を採用
@@ -391,7 +436,7 @@ admin-field-list
 //-     };
 
 
-//- コレクション選択フォーム(old)
+//- コレクション選択フォーム
 //- datalist 使ってたやつだけど微妙だったのでモーダル版を採用
 admin-field-collection
   div.fs11.bold.text-gray.mb8 {opts.field.label}

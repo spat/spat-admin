@@ -207,7 +207,7 @@ admin-field-image
   div.bg-gray_pale.relative.w-full.h-auto.max-width-500.min-height-200.cursor-pointer.mb4(onclick='{onSelectImage}')
     img.s-full.object-fit-contain.border(if="{url || opts.riotValue}", src='{url || opts.riotValue}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
-  div.fs10.mb16(if='{_isPageAssets()}') クリック または ドラッグ&ドロップで追加できます
+  div.fs10.mb16(if='{!opts.field.options}') クリック または ドラッグ&ドロップで追加できます
   
   style(type='less').
     :scope {
@@ -237,7 +237,6 @@ admin-field-image
       // drag and drop対応
       this.root.ondragover = (e) => { return false; };
       this.root.ondrop = (e) => {
-        if (!this._isPageAssets()) return ;
         var file = e.dataTransfer.files[0];
         if (!file) return ;
         
@@ -255,19 +254,15 @@ admin-field-image
 
     this.onSelectImage = async (e) => {
       e.preventDefault();
-      //- 画像ページでのみ直接file追加ができる
-      if (this._isPageAssets()) {
-        this.input.click();
-      }
-      else {
-        var modal = spat.modal.open('admin-modal-images', {
-          collection: 'assets' 
-        });
-        var item = await modal.waitClose();
-        if (item) {
-          this.url = item.data.image.url;
+      if (this.opts.field.options) {
+        var url = await this.opts.field.options();
+        if (url) {
+          this.url = url;
           this.update();
         }
+      }
+      else {
+        this.input.click();
       }
     };
 
@@ -289,11 +284,6 @@ admin-field-image
     this.validateFileImageOnly = (type) => {
       var re = /(^image\/\w*)/;
       return re.test(type);
-    };
-
-    //- 画像ページかどうか
-    this._isPageAssets = () => {
-      return location.pathname.indexOf('/assets/') !== -1;
     };
 
 

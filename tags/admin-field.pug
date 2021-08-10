@@ -361,80 +361,93 @@ admin-field-array
       return this.items;
     };
 
-//- コレクション選択フォーム(old)
-//- datalist 使ってたやつだけど微妙だったのでモーダル版を採用
-//- admin-field-collection
-//-   div.fs11.bold.text-gray.mb8 {opts.field.label}
-//-   form.f.fm.mb8(onsubmit='{submit}')
-//-     input.input.w50per.mr4(ref='input', type='text', list='{opts.field.label}', oninput='{debouncedSyncCandidates}', onselect='{hoge}')
-//-     //- button.button 追加
-//-   div
-//-     div.p6.border.rounded-4.mb4(each='{item, index in items}')
-//-       div.f.relative
-//-         span {index}. {getItemLabel(item)}
+//- 配列
+admin-field-array
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  div.mb8(ref='items')
+    div.p8.border.rounded-4.mb8(each='{item, index in items}')
+      div.f.fm.fbw
+        div.f.fm.w-full
+          i.material-icons.mr4.handle.cursor-grab import_export
+          span.mr8 {index}.
+          //- string, number
+          input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}')
+          //- TODO: objectはプロパティの数も追加できるように
+        button(type='button', onclick='{onDeleteItem}')
+          i.material-icons.text-gray.fs18 delete
+  div
+    button.button(type='button', onclick='{onOpenModal}') 追加
 
-//-   datalist(id='{opts.field.label}')
-//-     option(each='{item in candidates}', value='{getItemValue(item)}') {getItemLabel(item)}
+  style(type='less').
+    :scope {
+      display: block;
+      .cursor-grab {
+        cursor: grab;
+      }
+    }
 
-//-   script.
+  script.
+    this.on('mount', async () => {
+      this.items = this.opts.riotValue;
+      this.update();
 
-//-     this.on('mount', async () => {
-//-       this.value = opts.riotValue;
+      // ソート設定
+      Sortable.create(this.refs.items, {
+        animation: 150,
+        handle: '.handle',
+        onEnd: async (e) => {
+          var items = this.items;
+          var temp = items.splice(e.oldIndex, 1)[0];
+          items.splice(e.newIndex, 0, temp);
 
-//-       this.syncCandidates();
+          //- DOMのindex番号が更新されないバグ回避で配列をリセットする
+          this.items = [];
+          this.update();
 
-//-       // 個別記事を取得する
-//-       var promises = opts.riotValue.map(async id => {
-//-         return app.admin.crud.get({
-//-           path: `${this.opts.field.options.collection}/${id}`
-//-         });
-//-       });
+          this.items = _.clone(items);
+          this.update();
+        },
+      });
+    });
 
-//-       this.items = await Promise.all(promises);
-//-       this.update();
-//-     });
+    this.onOpenModal = async () => {
 
-//-     this.submit = (e) => {
-//-       e.stopPropagation();
-//-       e.preventDefault();
-//-     };
+      let addItem;
+      switch (this.opts.field.options.type) {
+        case 'text':
+          addItem = '';
+          break;
+        case 'number':
+          addItem = 0;
+          break;
+        case 'object':
+          addItem = {'': ''};
+          break;
+      }
 
-//-     // 候補一覧を更新
-//-     this.syncCandidates = async () => {
-//-       var res = await app.admin.crud.index({
-//-         path: `${this.opts.field.options.collection}`,
-//-         keyword: this.refs.input.value,
-//-       });
-          this.candidates = res.items;
-//-       this.update();
-//-     };
+      var modal = spat.modal.open('admin-modal-array', {
+        type: this.opts.field.options.type,
+        item: addItem,
+      });
 
-//-     this.debouncedSyncCandidates = _.debounce((e) => {
-//-       // 入力内容とヒットする item を探す
-//-       var item = this.candidates.find(item => this.getItemValue(item) === e.target.value);
+      var item = await modal.waitClose();
 
-//-       if (item) {
-//-         this.items.push(item);
-//-         e.target.value = '';
-//-         this.update();
-//-       }
-//-       else {
-//-         this.syncCandidates();
-//-       }
-//-     }, 100);
+      if (item) {
+        this.items.push(item);
+        riot.update();
+      }
+    };
 
-//-     this.getItemValue = (item) => {
-//-       return admin.utils.$get(item, this.opts.field.options.value_key);
-//-     };
-//-     this.getItemLabel = (item) => {
-//-       return admin.utils.$get(item, this.opts.field.options.label_key);
-//-     };
+    this.onDeleteItem = (e) => {
+      this.items = this.items.filter(item => item !== e.item.item);
+      this.update();
+    };
 
-//-     this.getValue = () => {
-//-       var values = this.items.map(item => this.getItemValue(item));
-//-       return values;
-//-     };
-
+    this.getValue = () => {
+      const inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
+      this.items = inputs.map(input => input.value);
+      return this.items;
+    };
 
 //- コレクション選択フォーム
 //- datalist 使ってたやつだけど微妙だったのでモーダル版を採用

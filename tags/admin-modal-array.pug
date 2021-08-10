@@ -1,0 +1,25 @@
+admin-modal-array.f.fh
+  div.f.flex-column.bg-white.w80vw.h80vh.rounded-8(ref='modal')
+    div.f.fh.p16.overflow-scroll.h-full.bg-whitesmoke
+      div
+        //- TODO: objectはプロパティの数も追加できるように
+        input.input.w-full.p4.mb8(type='{this.opts.type}', ref='input' value='{opts.item}')
+        div.f.fc
+          button.block.text-center.p8.border.rounded-4.bg-white.hover-trigger.hover-bg-dark.mr16(type='button', , onclick='{onCancel}') キャンセル
+          button.block.text-center.p8.border.rounded-4.bg-white.hover-trigger.hover-bg-dark(type='button', , onclick='{onAdd}') 追加
+
+  style(type='less').
+    :scope {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+  
+  script.
+    this.onAdd = (e) => {
+      this.value = this.refs.input.value;
+      this.close();
+    };
+
+    this.onCancel = (e) => {
+      this.value = false;
+      this.close();
+    };

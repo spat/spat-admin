@@ -374,8 +374,8 @@ admin-field-array
     };
 
     this.getValue = () => {
-      const inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
-      this.items = inputs.map(input => input.value);
+      const $inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
+      this.items = $inputs.map(input => input.value);
       return this.items;
     };
 

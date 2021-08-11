@@ -254,7 +254,8 @@ admin-field-image
 
     this.onSelectImage = async (e) => {
       e.preventDefault();
-      if (this.opts.field.options) {
+      //- optionsの値が関数なら返り値を使う
+      if (typeof this.opts.field.options === 'function') {
         var url = await this.opts.field.options();
         if (url) {
           this.url = url;

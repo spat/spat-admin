@@ -207,7 +207,7 @@ admin-field-image
   div.bg-gray_pale.relative.w-full.h-auto.max-width-500.min-height-200.cursor-pointer.mb4(onclick='{onSelectImage}')
     img.s-full.object-fit-contain.border(if="{url || opts.riotValue}", src='{url || opts.riotValue}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
-  div.fs10.mb16 クリック または ドラッグ&ドロップで追加できます
+  div.fs10.mb16(if='{!opts.field.options}') クリック または ドラッグ&ドロップで追加できます
   
   style(type='less').
     :scope {
@@ -252,9 +252,19 @@ admin-field-image
       };
     });
 
-    this.onSelectImage = (e) => {
+    this.onSelectImage = async (e) => {
       e.preventDefault();
-      this.input.click();
+      //- options内、onclickの値が関数なら返り値を使う
+      if (this.opts.field.options && typeof this.opts.field.options.onclick === 'function') {
+        var url = await this.opts.field.options.onclick();
+        if (url) {
+          this.url = url;
+          this.update();
+        }
+      }
+      else {
+        this.input.click();
+      }
     };
 
     this._setFile = async (file) => {

@@ -301,12 +301,12 @@ admin-field-array
           i.material-icons.mr4.handle.cursor-grab import_export
           span.mr8 {index}.
           //- string, number
-          input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}')
+          input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}', oninput='{debounceSyncItems}')
           //- TODO: objectはプロパティの数も追加できるように
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
   div
-    button.button(type='button', onclick='{onOpenModal}') 追加
+    button.button(type='button', onclick='{onAdd}') 追加
 
   style(type='less').
     :scope {
@@ -340,7 +340,7 @@ admin-field-array
       });
     });
 
-    this.onOpenModal = async () => {
+    this.onAdd = async () => {
 
       let addItem;
       switch (this.opts.field.options.type) {
@@ -355,17 +355,8 @@ admin-field-array
           break;
       }
 
-      var modal = spat.modal.open('admin-modal-array', {
-        type: this.opts.field.options.type,
-        item: addItem,
-      });
-
-      var item = await modal.waitClose();
-
-      if (item) {
-        this.items.push(item);
-        riot.update();
-      }
+      this.items.push(addItem);
+      this.update();
     };
 
     this.onDeleteItem = (e) => {
@@ -377,6 +368,16 @@ admin-field-array
       const $inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
       this.items = $inputs.map(input => input.value);
       return this.items;
+    };
+
+    this.debounceSyncItems = _.debounce(() => {
+      // this.items を同期
+      this.syncItems();
+    }, 256);
+
+    this.syncItems = () => {
+      const $inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
+      this.items = $inputs.map(input => input.value);
     };
 
 //- コレクション選択フォーム

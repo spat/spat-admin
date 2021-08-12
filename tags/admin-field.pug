@@ -302,7 +302,7 @@ admin-field-array
           span.mr8 {index}.
           //- string, number
           input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}', oninput='{debounceSyncItems}')
-          //- TODO: objectはプロパティの数も追加できるように
+          //- TODO: object対応
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
   div
@@ -350,9 +350,10 @@ admin-field-array
         case 'number':
           addItem = 0;
           break;
-        case 'object':
-          addItem = {'': ''};
-          break;
+        //- TODO: object対応
+        //- case 'object':
+        //-   addItem = {'': ''};
+        //-   break;
       }
 
       this.items.push(addItem);

@@ -301,7 +301,7 @@ admin-field-array
           i.material-icons.mr4.handle.cursor-grab import_export
           span.mr8 {index}.
           //- string, number
-          input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}', oninput='{debounceSyncItems}')
+          input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}', onblur='{syncItems}')
           //- TODO: object対応
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
@@ -366,16 +366,11 @@ admin-field-array
     };
 
     this.getValue = () => {
-      const $inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
-      this.items = $inputs.map(input => input.value);
+      this.syncItems();
       return this.items;
     };
 
-    this.debounceSyncItems = _.debounce(() => {
-      // this.items を同期
-      this.syncItems();
-    }, 256);
-
+    //- 入力した内容を配列データに同期する
     this.syncItems = () => {
       const $inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
       this.items = $inputs.map(input => input.value);

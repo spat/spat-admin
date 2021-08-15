@@ -1,5 +1,5 @@
 admin-field-text
-  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  div.fs11.bold.text-gray.mb8(if='{opts.field.label}') {opts.field.label}
   input.input.w-full(ref='input', type='text', value='{opts.riotValue.toString()}', required='{opts.field.options.required}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
 
   style(type='less').
@@ -300,8 +300,7 @@ admin-field-array
         div.f.fm.w-full
           i.material-icons.mr4.handle.cursor-grab import_export
           span.mr8 {index}.
-          //- string, number
-          input.input.w-full.p4.mr6(ref='input', type='{opts.field.options.type}', value='{item}', onblur='{syncItems}')
+          div(ref='fields', data-is='admin-field-{opts.field.options.field.type}', field='{opts.field.options.field}', value='{item}')
           //- TODO: object対応
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
@@ -318,7 +317,7 @@ admin-field-array
 
   script.
     this.on('mount', async () => {
-      this.items = this.opts.riotValue;
+      this.items = this.opts.riotValue || [];
       this.update();
 
       // ソート設定
@@ -341,22 +340,7 @@ admin-field-array
     });
 
     this.onAdd = async () => {
-
-      let addItem;
-      switch (this.opts.field.options.type) {
-        case 'text':
-          addItem = '';
-          break;
-        case 'number':
-          addItem = 0;
-          break;
-        //- TODO: object対応
-        //- case 'object':
-        //-   addItem = {'': ''};
-        //-   break;
-      }
-
-      this.items.push(addItem);
+      this.items.push('');
       this.update();
     };
 
@@ -365,15 +349,22 @@ admin-field-array
       this.update();
     };
 
-    this.getValue = () => {
-      this.syncItems();
-      return this.items;
-    };
+    this.getValue = async () => {
+      // 一個も設定していない場合を考慮
+      if (!this.refs.fields) return [];
 
-    //- 入力した内容を配列データに同期する
-    this.syncItems = () => {
-      const $inputs = Array.isArray(this.refs.input) ? this.refs.input : [this.refs.input];
-      this.items = $inputs.map(input => input.value);
+      // 配列じゃない場合を考慮
+      var fields = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+
+      // 非同期を考慮
+      var promises = fields.map(async field => {
+        return field.getValue();
+      });
+
+      // 結果を配列として取得
+      var results = await Promise.all(promises);
+
+      return results;
     };
 
 //- コレクション選択フォーム

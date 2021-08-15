@@ -3,7 +3,8 @@ admin-module-header
     div.h60.f.fbw.fm.px16
       div.f.fm
         div.f.fm.item(each='{item in getBreadcrumbs()}')
-          a.fs16.bold(href='{item.link}') {item.label}
+          a.fs16.bold(if="{item.link}", href='{item.link}') {item.label}
+          div.fs16.bold.text-gray(if="{!item.link}") {item.label}
           div.text-gray.arrow.mx8 >
       div.f.fm(if='{opts.list}')
         div.ml8(if='{canCreate()}')
@@ -44,10 +45,27 @@ admin-module-header
         });
       }
       else if (this.opts.form) {
-        items.push({
-          label: this.opts.form.schema.label,
-          link: `/${this.opts.form.collection}`,
-        });
+        if (this.opts.form.basename.includes('/')) {
+          let paths = this.opts.form.basename.split('/');
+          for (var i = 0; i <= paths.length - 2; i += 2) {
+            items.push({
+              label: app.admin.schema[paths[i]].label,
+              link: `/${paths[i]}`
+            });
+            items.push({
+              label: `${paths[i + 1]}`,
+              link: `/${paths[i]}/${paths[i + 1]}`
+            })
+            items.push({
+              label: this.opts.form.schema.label,
+            });
+          }
+        } else {
+          items.push({
+            label: this.opts.form.schema.label,
+            link: `/${this.opts.form.collection}`,
+          });
+        }
         items.push({
           label: this.opts.form.id,
           link: `/${this.opts.form.path}`,

@@ -47,25 +47,29 @@ admin-module-header
       else if (this.opts.form) {
         if (this.opts.form.basename.includes('/')) {
           let paths = this.opts.form.basename.split('/');
+          //- サブコレの場合親へのリンク追加
           for (var i = 0; i <= paths.length - 2; i += 2) {
             items.push({
               label: app.admin.schema[paths[i]].label,
               link: `/${paths[i]}`
             });
             items.push({
-              label: `${paths[i + 1]}`,
-              link: `/${paths[i]}/${paths[i + 1]}`
+              label: `${paths[i+1]}`,
+              link: `/${paths[i]}/${paths[i+1]}`
             })
             items.push({
               label: this.opts.form.schema.label,
             });
           }
-        } else {
+        } 
+        //- 通常の場合
+        else {
           items.push({
             label: this.opts.form.schema.label,
             link: `/${this.opts.form.collection}`,
           });
         }
+        //- 共通: 現ページのリンク
         items.push({
           label: this.opts.form.id,
           link: `/${this.opts.form.path}`,

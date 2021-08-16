@@ -310,7 +310,7 @@ admin-field-array
         div.f.fm.w-full
           i.material-icons.mr4.handle.cursor-grab import_export
           span.mr8 {index}.
-          div(ref='fields', data-is='admin-field-{opts.field.options.field.type}', field='{opts.field.options.field}', value='{item}')
+          div(ref='fields', data-is='admin-field-{opts.field.options.field.type}', field='{opts.field.options.field}', value='{getItem(item)}')
           //- TODO: object対応
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
@@ -374,8 +374,25 @@ admin-field-array
       // 結果を配列として取得
       var results = await Promise.all(promises);
 
+      //- 指定がある場合はオブジェクトを成形
+      var child_key = this.opts.field.options.field.child_key;
+      if (child_key) {
+        results = results.map(result => {
+          return {[child_key]: result}
+        })
+      }
+
       return results;
     };
+
+    //- 指定がある場合はitem内任意のプロパティを表示
+    this.getItem = (item) => {
+      var child_key = this.opts.field.options.field.child_key;
+      if (child_key) {
+        return item[child_key];
+      }
+      return item;
+    }
 
 //- コレクション選択フォーム
 //- datalist 使ってたやつだけど微妙だったのでモーダル版を採用

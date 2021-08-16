@@ -306,14 +306,15 @@ admin-field-array
   div.fs11.bold.text-gray.mb8 {opts.field.label}
   div.mb8(ref='items')
     div.p8.border.rounded-4.mb8(each='{item, index in items}')
-      div.f.fm.fbw
-        div.f.fm.w-full
+      div.f.fm
+        div
           i.material-icons.mr4.handle.cursor-grab import_export
+        div
           span.mr8 {index}.
-          div(ref='fields', data-is='admin-field-{opts.field.options.field.type}', field='{opts.field.options.field}', value='{item}')
-          //- TODO: object対応
+        div.w-full.mr8(ref='fields', data-is='admin-field-{opts.field.options.field.type}', field='{opts.field.options.field}', value='{item}')
         button(type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
+
   div
     button.button(type='button', onclick='{onAdd}') 追加
 

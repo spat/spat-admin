@@ -336,7 +336,7 @@ admin-field-array
         animation: 150,
         handle: '.handle',
         onEnd: async (e) => {
-          var items = this.items;
+          var items = await this.getValue();
           var temp = items.splice(e.oldIndex, 1)[0];
           items.splice(e.newIndex, 0, temp);
 
@@ -344,7 +344,7 @@ admin-field-array
           this.items = [];
           this.update();
 
-          this.items = _.clone(items);
+          this.items = items;
           this.update();
         },
       });
@@ -355,8 +355,14 @@ admin-field-array
       this.update();
     };
 
-    this.onDeleteItem = (e) => {
-      this.items = this.items.filter(item => item !== e.item.item);
+    this.onDeleteItem = async (e) => {
+      var items = await this.getValue();
+      items.splice(e.item.index, 1);
+
+      this.items = [];
+      this.update();
+
+      this.items = items;
       this.update();
     };
 

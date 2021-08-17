@@ -47,17 +47,17 @@ admin-module-header
       }
       //- 詳細ページ
       else if (this.opts.form) {
-        //- サブコレの場合: 親へのリンク追加
+        //- サブコレの場合
         if (this.opts.form.basename.includes('/')) {
           let paths = this.opts.form.basename.split('/');
           var link = ""
           var schema = app.admin.schema;
-          //- ex.["recruits", "recruit_id", "recruit_rooms", "recruit_room_id" ...]
+          //- コレクション名、idをセットで処理する
           for (var i = 0; i <= paths.length - 2; i += 2) {
             //- コレクション名
             schema = schema[paths[i]]
             var item = {label: schema.label}
-            //- 一覧が存在すればリンク用意。それ以外はラベルのみ
+            //- 一覧ページが存在すればリンク用意。それ以外はラベルのみ
             if (app.admin.menu[0].items.some(item => item.link === `/${paths[i]}`)) {
               link = `/${paths[i]}`
               item.link = link
@@ -73,19 +73,19 @@ admin-module-header
               link: link
             })
           }
-          //- 表示する詳細ページのコレクション名 ex.募集部屋メッセージ
+          //- 表示する詳細ページのコレクション名
           items.push({
             label: this.opts.form.schema.label,
           });
         } 
-        //- 通常の場合: 一覧ページへのリンク
+        //- サブコレ以外の通常の場合
         else {
           items.push({
             label: this.opts.form.schema.label,
             link: `/${this.opts.form.collection}`,
           });
         }
-        //- サブコレ通常共通: 現ページのリンク
+        //- 全ページ共通 現在のページのリンク
         items.push({
           label: this.opts.form.id,
           link: `/${this.opts.form.path}`,

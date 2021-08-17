@@ -38,20 +38,25 @@ admin-module-header
         },
       ];
 
+      //- 一覧ページ
       if (this.opts.list) {
         items.push({
           label: this.opts.list.schema.label,
           link: `/${opts.path}`,
         });
       }
+      //- 詳細ページ
       else if (this.opts.form) {
         //- サブコレの場合: 親へのリンク追加
         if (this.opts.form.basename.includes('/')) {
           let paths = this.opts.form.basename.split('/');
           var link = ""
+          var schema = app.admin.schema;
           //- ex.["recruits", "recruit_id", "recruit_rooms", "recruit_room_id" ...]
           for (var i = 0; i <= paths.length - 2; i += 2) {
-            var item = {label: app.admin.schema[paths[i]].label}
+            //- コレクション名
+            schema = schema[paths[i]]
+            var item = {label: schema.label}
             //- 一覧が存在すればリンク用意。それ以外はラベルのみ
             if (app.admin.menu[0].items.some(item => item.link === `/${paths[i]}`)) {
               link = `/${paths[i]}`

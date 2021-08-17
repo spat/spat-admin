@@ -45,37 +45,47 @@ admin-module-header
         });
       }
       else if (this.opts.form) {
+        //- サブコレの場合: 親へのリンク追加
         if (this.opts.form.basename.includes('/')) {
           let paths = this.opts.form.basename.split('/');
-          //- サブコレの場合親へのリンク追加
+          var link = ""
+          //- ex.["recruits", "recruit_id", "recruit_rooms", "recruit_room_id" ...]
           for (var i = 0; i <= paths.length - 2; i += 2) {
-            items.push({
-              label: app.admin.schema[paths[i]].label,
-              link: `/${paths[i]}`
-            });
+            var item = {label: app.admin.schema[paths[i]].label}
+            //- 一覧が存在すればリンク用意。それ以外はラベルのみ
+            if (app.admin.menu[0].items.some(item => item.link === `/${paths[i]}`)) {
+              link = `/${paths[i]}`
+              item.link = link
+              link += `/${paths[i+1]}`;
+            } else {
+              link += `/${paths[i]}/${paths[i+1]}`
+            }
+            //- 一覧リンク
+            items.push(item);
+            //- 詳細リンク
             items.push({
               label: `${paths[i+1]}`,
-              link: `/${paths[i]}/${paths[i+1]}`
+              link: link
             })
-            items.push({
-              label: this.opts.form.schema.label,
-            });
           }
+          //- 表示する詳細ページのコレクション名 ex.募集部屋メッセージ
+          items.push({
+            label: this.opts.form.schema.label,
+          });
         } 
-        //- 通常の場合
+        //- 通常の場合: 一覧ページへのリンク
         else {
           items.push({
             label: this.opts.form.schema.label,
             link: `/${this.opts.form.collection}`,
           });
         }
-        //- 共通: 現ページのリンク
+        //- サブコレ通常共通: 現ページのリンク
         items.push({
           label: this.opts.form.id,
           link: `/${this.opts.form.path}`,
         });
       }
-
       return items;
     };
 

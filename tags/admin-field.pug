@@ -378,8 +378,8 @@ admin-field-array
       var child_key = this.opts.field.options.field.child_key;
       if (child_key) {
         results = results.map(result => {
-          return {[child_key]: result}
-        })
+          return {[child_key]: result};
+        });
       }
 
       return results;

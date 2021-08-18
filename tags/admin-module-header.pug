@@ -3,7 +3,8 @@ admin-module-header
     div.h60.f.fbw.fm.px16
       div.f.fm
         div.f.fm.item(each='{item in getBreadcrumbs()}')
-          a.fs16.bold(href='{item.link}') {item.label}
+          a.fs16.bold(if="{item.link}", href='{item.link}') {item.label}
+          div.fs16.bold.text-gray(if="{!item.link}") {item.label}
           div.text-gray.arrow.mx8 >
       div.f.fm(if='{opts.list}')
         div.ml8(if='{canCreate()}')
@@ -37,23 +38,59 @@ admin-module-header
         },
       ];
 
+      //- 一覧ページ
       if (this.opts.list) {
         items.push({
           label: this.opts.list.schema.label,
           link: `/${opts.path}`,
         });
       }
+      //- 詳細ページ
       else if (this.opts.form) {
-        items.push({
-          label: this.opts.form.schema.label,
-          link: `/${this.opts.form.collection}`,
-        });
+        //- サブコレの場合
+        if (this.opts.form.basename.includes('/')) {
+          let paths = this.opts.form.basename.split('/');
+          var link = ""
+          var schema = app.admin.schema;
+          //- コレクション名、idをセットで処理する
+          for (var i = 0; i <= paths.length - 2; i += 2) {
+            //- コレクション名
+            schema = schema[paths[i]]
+            var item = {label: schema.label}
+            //- 一覧ページが存在すればリンク用意。それ以外はラベルのみ
+            if (app.admin.menu[0].items.some(item => item.link === `/${paths[i]}`)) {
+              link = `/${paths[i]}`
+              item.link = link
+              link += `/${paths[i+1]}`;
+            } else {
+              link += `/${paths[i]}/${paths[i+1]}`
+            }
+            //- 一覧リンク
+            items.push(item);
+            //- 詳細リンク
+            items.push({
+              label: `${paths[i+1]}`,
+              link: link
+            })
+          }
+          //- 表示する詳細ページのコレクション名
+          items.push({
+            label: this.opts.form.schema.label,
+          });
+        } 
+        //- サブコレ以外の通常の場合
+        else {
+          items.push({
+            label: this.opts.form.schema.label,
+            link: `/${this.opts.form.collection}`,
+          });
+        }
+        //- 全ページ共通 現在のページのリンク
         items.push({
           label: this.opts.form.id,
           link: `/${this.opts.form.path}`,
         });
       }
-
       return items;
     };
 

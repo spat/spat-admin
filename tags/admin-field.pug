@@ -469,3 +469,40 @@ admin-field-button
         });
       }
     };
+
+admin-field-object
+  div.fs11.bold.text-gray.mb8 {opts.field.label}
+  div 
+    div.mb8(each='{field, index in opts.field.options.fields}')
+      div.w-full.mb8(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(opts.riotValue, field.key)}')
+
+  style(type='less').
+    :scope {
+      display: block;
+    }
+
+  script.
+    this.on('mount', async () => {
+    });
+
+    this.getValue = async () => {
+      var data = {};
+      var fields = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+
+      var promises = fields.map(async field => {
+        if (!field.getValue) return ;
+
+        var value = field.getValue();
+
+        //- imageアップ時、プロミスで返ってくるのを対応
+        if (value instanceof Promise) {
+          value = await value;
+        }
+
+        admin.utils.$set(data, field.opts.field.key, value);
+      });
+
+      await Promise.all(promises);
+
+      return data;
+    };

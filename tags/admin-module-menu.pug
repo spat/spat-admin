@@ -15,7 +15,7 @@ admin-module-menu
 
   script.
     //- サインアウト
-    this.signOut = () => {
+    this.signOut = async () => {
       var result = await spat.modal.confirm('ログアウトしますか?');
       if (!result) return;
       firebase.auth().signOut();

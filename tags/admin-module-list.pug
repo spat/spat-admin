@@ -64,7 +64,10 @@ admin-module-list
       spat.router.push(`${root}${e.item.item.path}`);
     };
 
-    this.fetch = async () => {
+    this.fetch = async (e) => {
+      if (e) {
+        e.preventDefault();
+      }
       var keyword = this.refs.search.value;
       var filters = {};
 

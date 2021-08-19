@@ -20,7 +20,7 @@ admin-module-list
 
     //-  もっと見る
     div.f.fh.py10(if='{next_cursor}')
-      button.button(onclick='{fetch}') もっと見る
+      button.button(type='button', onclick='{fetch}') もっと見る
 
   style(type='less').
     :scope {
@@ -64,10 +64,7 @@ admin-module-list
       spat.router.push(`${root}${e.item.item.path}`);
     };
 
-    this.fetch = async (e) => {
-      if (e) {
-        e.preventDefault();
-      }
+    this.fetch = async () => {
       var keyword = this.refs.search.value;
       var filters = {};
 

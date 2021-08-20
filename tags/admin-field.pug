@@ -207,7 +207,7 @@ admin-field-image
   div.relative.f.fh.bg-gray_pale.w-full.h-auto.max-width-500.min-height-200.cursor-pointer.mb4(onclick='{onSelectImage}')
     img.s-full.object-fit-contain.border(if="{url}", src='{url}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
-    div.absolute.tn16.rn16.bg-gray_pale.f.fh.circle.s32.border(if='{url || file}', onclick='{delete}')
+    div.absolute.tn16.rn16.bg-gray_pale.f.fh.circle.s32.border(if='{isDeletable()}', onclick='{delete}')
       div.f.fh.s-full.pb4.fs20 ×
 
   div.fs10.mb16(if='{!opts.field.options}') クリック または ドラッグ&ドロップで追加できます
@@ -315,6 +315,15 @@ admin-field-image
       delete this.file;
       this.url = '';
       this.update();
+    };
+
+    //- optionによって削除ボタンを表示 デフォルトはtrue
+    this.isDeletable = () => {
+      var deletable = true;
+      if (this.opts.field.options.deletable !== undefined) {
+        deletable = this.opts.field.options.deletable;
+      }
+      return deletable && this.url || this.file
     };
 
 

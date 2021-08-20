@@ -10,7 +10,7 @@ admin-field-text
   script.
     this.getValue = () => {
       var value = this.refs.input.value;
-      if (Array.isArray(opts.riotValue)) {
+      if (Array.isArray(this.opts.riotValue)) {
         return value.split(',').map(s => s.trim());
       }
       else {
@@ -225,7 +225,7 @@ admin-field-image
 
   script.
     this.on('mount', () => {
-      this.url = opts.riotValue;
+      this.url = this.opts.riotValue;
       this.update();
 
       this.input = document.createElement('input');
@@ -281,7 +281,7 @@ admin-field-image
 
     this.getValue = async () => {
       //- 変更していない場合
-      if (!this.file && this.url === opts.riotValue) return opts.riotValue;
+      if (!this.file && this.url === this.opts.riotValue) return this.opts.riotValue;
 
       //- アップロード済みの画像から選択した場合
       if (!this.file && /^http.+/.test(this.url)) return this.url;

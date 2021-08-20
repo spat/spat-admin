@@ -274,7 +274,11 @@ admin-field-image
     };
 
     this.getValue = async () => {
-      if (!this.file) return opts.riotValue;
+      //- 変更していない場合
+      if (!this.file && this.url === opts.riotValue) return opts.riotValue;
+
+      //- アップロード済みの画像から選択した場合
+      if (!this.file && /^http.+/.test(this.url)) return this.url;
 
       let url = await app.admin.utils.uploadFile(this.file);
 

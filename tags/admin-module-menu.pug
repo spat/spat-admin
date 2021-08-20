@@ -1,10 +1,23 @@
 admin-module-menu 
-  div.s-full.bg-primary.text-white.p16
-    div.p16.f.fh.mb32
-      a(href='/')
-        img(src='{opts.logo}')
-    div.mb32(each='{section in opts.menu}')
-      div.bold.fs12.mb8 {section.label}
-      div
-        div.hover-trigger.hover-bg-light.rounded-8.pl8(each='{item in section.items}')
-          a.p8.block(href='{item.link}', class='{"rounded-top-left-full rounded-bottom-left-full bg-whitesmoke pl16 bold text-gray mrn16 mln8": location.pathname.indexOf(item.link) === 0}') {item.label}
+  div.f.fh.fbw.fclm.relative.s-full.bg-primary.text-white.p16
+    div
+      div.p16.f.fh.mb32
+        a(href='/')
+          img(src='{opts.logo}')
+      div.mb32(each='{section in opts.menu}')
+        div.bold.fs12.mb8 {section.label}
+        div
+          div.hover-trigger.hover-bg-light.rounded-8.pl8(each='{item in section.items}')
+            a.p8.block(href='{item.link}', class='{"rounded-top-left-full rounded-bottom-left-full bg-whitesmoke pl16 bold text-gray mrn16 mln8": location.pathname.indexOf(item.link) === 0}') {item.label}
+    div.f.fh.fclm.mb32
+      div.mb16 {firebase.auth().currentUser.email}
+      button.button.fs12.p8(onclick="{signOut}") ログアウト
+
+  script.
+    //- サインアウト
+    this.signOut = async () => {
+      var result = await spat.modal.confirm('ログアウトしますか?');
+      if (!result) return;
+      firebase.auth().signOut();
+      spat.router.push('/login');
+    };

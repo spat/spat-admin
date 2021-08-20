@@ -30,15 +30,14 @@ admin-module-form
       // コレクション名
       this.collection = this.basename.split('/').pop();
       
+      this.reset();
+
       if (this.id !== 'new') {
         var item = await app.admin.crud.get({
           path: path,
         });
 
         this.item = item;
-      }
-      else {
-        this.reset();
       }
 
       // schema を取得
@@ -111,6 +110,7 @@ admin-module-form
           item,
         });
       }
+      
 
       this.update();
 

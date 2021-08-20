@@ -280,14 +280,23 @@ admin-field-image
     };
 
     this.getValue = async () => {
-      //- 変更していない場合
-      if (!this.file && this.url === this.opts.riotValue) return this.opts.riotValue;
+      //- ファイルが存在しない場合
+      if (!this.file) {
+        //- 変更していない場合
+        if (this.url === this.opts.riotValue) {
+          return this.opts.riotValue;
+        }
 
-      //- アップロード済みの画像から選択した場合
-      if (!this.file && /^http.+/.test(this.url)) return this.url;
+        //- アップロード済みの画像から選択した場合
+        if (/^http.+/.test(this.url)) {
+          return this.url;
+        }
 
-      //- 削除した場合
-      if (!this.file && !this.url) return this.url;
+        //- 削除した場合
+        if (!this.url) {
+          return this.url;
+        }
+      }
 
       let url = await app.admin.utils.uploadFile(this.file);
 

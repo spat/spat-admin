@@ -320,7 +320,7 @@ admin-field-image
     //- optionによって削除ボタンを表示 デフォルトはtrue
     this.isDeletable = () => {
       var deletable = true;
-      if (this.opts.field.options.deletable !== undefined) {
+      if (this.opts.field.options && this.opts.field.options.deletable !== undefined) {
         deletable = this.opts.field.options.deletable;
       }
       return deletable && this.url || this.file;

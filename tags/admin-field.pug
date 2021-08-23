@@ -111,7 +111,7 @@ admin-field-date
       $(this.refs.datetimepicker).datetimepicker({});
 
       if (this.opts.riotValue) {
-        var format = opts.field.options.format || 'YYYY/MM/DD HH:mm';
+        var format = opts.field.options && opts.field.options.format || 'YYYY/MM/DD HH:mm';
         this.refs.datetimepicker.value = dayjs(this.opts.riotValue).format(format);
       }
 

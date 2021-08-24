@@ -30,7 +30,10 @@ admin-field-text
 
 admin-field-textarea
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  textarea.input.w-full.lh15(ref='input', rows='{opts.field.rows || 4}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}') {opts.riotValue}
+  div
+    div.border-top.border-right.border-left.p8(if='{opts.field.options.shortcode}')
+      button.px8.py6.button.mr4(type='button', each='{shortcode in app.admin.shortcodes.list}', onclick='{onInsertText}') {shortcode.label}
+    textarea.input.w-full.lh15(ref='input', rows='{opts.field.rows || 4}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}') {opts.riotValue}
 
   style(type='less').
     :scope {
@@ -65,6 +68,33 @@ admin-field-textarea
         i.close();
       };
     });
+
+    this.onInsertText = async (e) => {
+      var shortcode = e.item.shortcode;
+      var onclick = shortcode.onclick;
+      var text = '';
+
+      // onclick があったらそっちを優先する
+      if (onclick) {
+        // 文字列だった場合は admin.utils から引っ張ってくる
+        if (typeof onclick === 'string') {
+          onclick = app.admin.shortcodes[onclick];
+        }
+        text = await onclick();
+      }
+      else {
+        var input = this.refs.input;
+        input.focus();
+
+        // 選択している部分のテキストを取得
+        var selectedValue = input.value.substring(input.selectionStart, input.selectionEnd);
+        text = shortcode.prefix + selectedValue + shortcode.postfix;
+      }
+
+      if (text) {
+        this.insertText(text);
+      }
+    };
 
     this.insertText = (text) => {
       let input = this.refs.input;

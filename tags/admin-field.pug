@@ -83,11 +83,11 @@ admin-field-textarea
         text = await onclick();
       }
       else {
-        var ta = this.refs.input;
-        ta.focus();
+        var input = this.refs.input;
+        input.focus();
 
         // 選択している部分のテキストを取得
-        var selectedValue = ta.value.substring(ta.selectionStart, ta.selectionEnd);
+        var selectedValue = input.value.substring(input.selectionStart, input.selectionEnd);
         text = shortcode.prefix + selectedValue + shortcode.postfix;
       }
 

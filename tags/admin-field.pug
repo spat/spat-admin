@@ -10,7 +10,7 @@ admin-field-text
   script.
     this.getValue = () => {
       var value = this.refs.input.value;
-      if (Array.isArray(opts.riotValue)) {
+      if (Array.isArray(this.opts.riotValue)) {
         return value.split(',').map(s => s.trim());
       }
       else {
@@ -248,9 +248,12 @@ admin-field-switch
 
 admin-field-image
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  div.f.fh.bg-gray_pale.relative.w-full.h-auto.max-width-500.min-height-200.cursor-pointer.mb4(onclick='{onSelectImage}')
-    img.s-full.object-fit-contain.border(if="{url || opts.riotValue}", src='{url || opts.riotValue}')
+  div.relative.f.fh.bg-gray_pale.w-full.h-auto.max-width-500.min-height-200.cursor-pointer.mb4(onclick='{onSelectImage}')
+    img.s-full.object-fit-contain.border(if="{url}", src='{url}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
+    div.absolute.tn16.rn16.bg-gray_pale.f.fh.circle.s32.border(if='{isDeletable()}', onclick='{delete}')
+      div.f.fh.s-full.pb4.fs20 ×
+
   div.fs10.mb16(if='{!opts.field.options}') クリック または ドラッグ&ドロップで追加できます
   
   style(type='less').
@@ -266,6 +269,9 @@ admin-field-image
 
   script.
     this.on('mount', () => {
+      this.url = this.opts.riotValue;
+      this.update();
+
       this.input = document.createElement('input');
       this.input.type = 'file';
       this.input.accept = 'image/*';
@@ -318,7 +324,23 @@ admin-field-image
     };
 
     this.getValue = async () => {
-      if (!this.file) return opts.riotValue;
+      //- ファイルが存在しない場合
+      if (!this.file) {
+        //- 変更していない場合
+        if (this.url === this.opts.riotValue) {
+          return this.opts.riotValue;
+        }
+
+        //- アップロード済みの画像から選択した場合
+        if (/^http.+/.test(this.url)) {
+          return this.url;
+        }
+
+        //- 削除した場合
+        if (!this.url) {
+          return "";
+        }
+      }
 
       let url = await app.admin.utils.uploadFile(this.file);
 
@@ -329,6 +351,23 @@ admin-field-image
     this.validateFileImageOnly = (type) => {
       var re = /(^image\/\w*)/;
       return re.test(type);
+    };
+
+    //- 選択中の画像を削除する
+    this.delete = (e) => {
+      e.stopPropagation();
+      delete this.file;
+      this.url = '';
+      this.update();
+    };
+
+    //- optionによって削除ボタンを表示 デフォルトはtrue
+    this.isDeletable = () => {
+      var deletable = true;
+      if (this.opts.field.options && this.opts.field.options.deletable !== undefined) {
+        deletable = this.opts.field.options.deletable;
+      }
+      return deletable && this.url || this.file;
     };
 
 

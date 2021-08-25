@@ -1,6 +1,6 @@
 admin-page.s-full
   div.s-full.f.fh
-    div.h-full.w200.flex-fixed.s-hide(data-is='admin-module-menu', menu='{app.admin.menu}', logo='{opts.logo || "/images/logo_color.png"}')
+    div.h-full.w200.flex-fixed.overflow-y-scroll.s-hide(data-is='admin-module-menu', menu='{app.admin.menu}', logo='{opts.logo || "/images/logo_color.png"}')
     div.s-full.f.flex-column.overflow-hidden
       header(data-is='admin-module-header', path='{path}', list='{refs.list}', form='{refs.form}')
       div.p32.overflow-y-scroll.s-p16

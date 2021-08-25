@@ -1,5 +1,5 @@
 admin-module-menu 
-  div.f.fh.fbw.fclm.relative.s-full.bg-primary.text-white.p16
+  div.relative.f.fh.fbw.fclm.p16.min-h100vh.bg-primary.text-white
     div
       div.p16.f.fh.mb32
         a(href='/')
@@ -12,6 +12,14 @@ admin-module-menu
     div.f.fh.fclm.mb32
       div.mb16 {firebase.auth().currentUser.email}
       button.button.fs12.p8(onclick="{signOut}") ログアウト
+
+  style(type='less').
+    :scope {
+      display: block;
+      .min-h100vh {
+        min-height: 100vh;
+      }
+    }
 
   script.
     //- サインアウト

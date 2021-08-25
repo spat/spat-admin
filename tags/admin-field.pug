@@ -390,15 +390,15 @@ admin-field-array
   div.mb8(ref='items')
     div.p8.border.rounded-4.mb8(each='{item, index in items}')
       div.f.fm
-        div
+        div(if='{!isReadOnly()}')
           i.material-icons.mr4.handle.cursor-grab import_export
         div
           span.mr8 {index}.
         div.w-full.mr8(ref='fields', data-is='admin-field-{opts.field.options.field.type}', field='{opts.field.options.field}', value='{item}')
-        button(type='button', onclick='{onDeleteItem}')
+        button(if='{!isReadOnly()}', type='button', onclick='{onDeleteItem}')
           i.material-icons.text-gray.fs18 delete
 
-  div
+  div(if='{!isReadOnly()}')
     button.button(type='button', onclick='{onAdd}') 追加
 
   style(type='less').
@@ -414,23 +414,25 @@ admin-field-array
       this.items = this.opts.riotValue || [];
       this.update();
 
-      // ソート設定
-      Sortable.create(this.refs.items, {
-        animation: 150,
-        handle: '.handle',
-        onEnd: async (e) => {
-          var items = await this.getValue();
-          var temp = items.splice(e.oldIndex, 1)[0];
-          items.splice(e.newIndex, 0, temp);
+      if (!this.isReadOnly()) {
+        // ソート設定
+        Sortable.create(this.refs.items, {
+          animation: 150,
+          handle: '.handle',
+          onEnd: async (e) => {
+            var items = await this.getValue();
+            var temp = items.splice(e.oldIndex, 1)[0];
+            items.splice(e.newIndex, 0, temp);
 
-          //- DOMのindex番号が更新されないバグ回避で配列をリセットする
-          this.items = [];
-          this.update();
+            //- DOMのindex番号が更新されないバグ回避で配列をリセットする
+            this.items = [];
+            this.update();
 
-          this.items = items;
-          this.update();
-        },
-      });
+            this.items = items;
+            this.update();
+          },
+        });
+      }
     });
 
     this.onAdd = async () => {
@@ -465,6 +467,10 @@ admin-field-array
       var results = await Promise.all(promises);
 
       return results;
+    };
+
+    this.isReadOnly = () => {
+      return this.opts.field.options ? this.opts.field.options.readOnly : false;
     };
 
 //- コレクション選択フォーム

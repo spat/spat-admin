@@ -12,7 +12,7 @@ admin-modal-collection.f.fh
     :scope {
       background-color: rgba(0, 0, 0, 0.5);
     }
-  
+
   script.
     this.on('mount', () => {
       this.syncCandidates();
@@ -23,6 +23,7 @@ admin-modal-collection.f.fh
       var res = await app.admin.crud.index({
         path: `${this.opts.options.collection}`,
         keyword: this.refs.search.value,
+        filters: this.opts.options.filters,
       });
       this.candidates = res.items;
       this.update();

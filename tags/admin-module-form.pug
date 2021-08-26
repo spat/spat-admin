@@ -134,7 +134,7 @@ admin-module-form
 
     //- fieldを表示するかどうか
     this.isVisibleField = (field) => {
-      if (typeof field.options.visible !== 'function') return true;
+      if (field.options && typeof field.options.visible !== 'function') return true;
       return field.options.visible({
         item: this.item,
         field,

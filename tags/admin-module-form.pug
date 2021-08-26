@@ -6,7 +6,7 @@ admin-module-form
           div.fs18.bold.mb8 {form.label}
           div.h2.w-full.bg-primary
         div.row
-          div.block.w-full.mb32(each='{field in form.fields}',if='{isVisibleField(field)}',  class='{field.class}')
+          div.block.w-full.mb32(each='{field in form.fields}', if='{isVisibleField(field)}', class='{field.class}')
             div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}')
 
     //- 外から submit できるようにするためのボタン

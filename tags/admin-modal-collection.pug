@@ -12,7 +12,7 @@ admin-modal-collection.f.fh
     :scope {
       background-color: rgba(0, 0, 0, 0.5);
     }
-  
+
   script.
     this.on('mount', () => {
       this.syncCandidates();
@@ -20,10 +20,15 @@ admin-modal-collection.f.fh
 
     // 候補一覧を更新
     this.syncCandidates = async () => {
-      var res = await app.admin.crud.index({
+      var data = {
         path: `${this.opts.options.collection}`,
         keyword: this.refs.search.value,
-      });
+      };
+      if (this.opts.options.filters) {
+        data.filters = this.opts.options.filters;
+      }
+
+      var res = await app.admin.crud.index(data);
       this.candidates = res.items;
       this.update();
     };

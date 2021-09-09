@@ -96,17 +96,14 @@ admin-field-textarea
       }
     };
 
-    this.insertText = (text, selectedValue) => {
+    this.insertText = (text, selectedValue='') => {
       let input = this.refs.input;
       let cursorPosition = input.selectionStart;
 
       let before = input.value.substr(0, cursorPosition);
-      let after = input.value.substr(cursorPosition);
+      //- 選択したテキストの後ろのテキスト
+      let after = input.value.substr(cursorPosition + selectedValue.length);
 
-      //- 選択したテキストが複製されないよう削除
-      if (selectedValue) {
-        after = after.replace(selectedValue, '');
-      }
 
       input.value = before + text + after;
 

@@ -101,7 +101,7 @@ admin-field-textarea
       let cursorPosition = input.selectionStart;
 
       let before = input.value.substr(0, cursorPosition);
-      let after = input.value.substr(cursorPosition);
+      let after = input.value.substr(input.selectionEnd);
 
       input.value = before + text + after;
 

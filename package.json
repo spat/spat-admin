@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "setup": "yarn",
     "clean": "rm -rf .cache",
     "dev": "parcel src/main.js -d ./ --out-file index.js --target node --global admin --no-source-maps",
     "test": "echo \"Error: no test specified\" && exit 1"

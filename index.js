@@ -531,6 +531,47 @@ riot.tag2('admin-modal-array', '<div class="f flex-column bg-white w80vw h80vh r
     this.close();
   };
 });
+},{}],"tags/admin-modal-collection.pug":[function(require,module,exports) {
+const riot = require('riot');
+
+riot.tag2('admin-modal-collection', '<div class="f flex-column bg-white w80vw h80vh rounded-8" ref="modal"> <form class="h80 f fr fm p16 border-bottom" onsubmit="{onSearch}"> <div class="f"> <input class="input mr8" ref="search" type="search" placeholder="Search"> <button class="button">検索</button> </div> </form> <div class="p16 overflow-scroll h-full bg-whitesmoke"> <button class="block w-full text-left p8 border rounded-4 bg-white hover-trigger hover-bg-dark mb8" type="button" each="{item, index in candidates}" riot-value="{getItemValue(item)}" onclick="{onSelect}">{index}. {getItemLabel(item)}</button> </div> </div>', 'admin-modal-collection,[data-is="admin-modal-collection"]{background-color:rgba(0,0,0,0.5)}', 'class="f fh"', function (opts) {
+  this.on('mount', () => {
+    this.syncCandidates();
+  });
+
+  this.syncCandidates = async () => {
+    var data = {
+      path: `${this.opts.options.collection}`,
+      keyword: this.refs.search.value
+    };
+
+    if (this.opts.options.filters) {
+      data.filters = this.opts.options.filters;
+    }
+
+    var res = await app.admin.crud.index(data);
+    this.candidates = res.items;
+    this.update();
+  };
+
+  this.onSearch = e => {
+    e.preventDefault();
+    this.syncCandidates();
+  };
+
+  this.getItemValue = item => {
+    return admin.utils.$get(item, this.opts.options.value_key);
+  };
+
+  this.getItemLabel = item => {
+    return admin.utils.$get(item, this.opts.options.label_key);
+  };
+
+  this.onSelect = e => {
+    this.value = e.item.item;
+    this.close();
+  };
+});
 },{}],"tags/admin-module-form.pug":[function(require,module,exports) {
 const riot = require('riot');
 
@@ -726,47 +767,6 @@ riot.tag2('admin-module-header', '<div class="bg-white box-shadow relative"> <di
     return opts.form && opts.form.schema.crud && opts.form.schema.crud.delete;
   };
 });
-},{}],"tags/admin-modal-collection.pug":[function(require,module,exports) {
-const riot = require('riot');
-
-riot.tag2('admin-modal-collection', '<div class="f flex-column bg-white w80vw h80vh rounded-8" ref="modal"> <form class="h80 f fr fm p16 border-bottom" onsubmit="{onSearch}"> <div class="f"> <input class="input mr8" ref="search" type="search" placeholder="Search"> <button class="button">検索</button> </div> </form> <div class="p16 overflow-scroll h-full bg-whitesmoke"> <button class="block w-full text-left p8 border rounded-4 bg-white hover-trigger hover-bg-dark mb8" type="button" each="{item, index in candidates}" riot-value="{getItemValue(item)}" onclick="{onSelect}">{index}. {getItemLabel(item)}</button> </div> </div>', 'admin-modal-collection,[data-is="admin-modal-collection"]{background-color:rgba(0,0,0,0.5)}', 'class="f fh"', function (opts) {
-  this.on('mount', () => {
-    this.syncCandidates();
-  });
-
-  this.syncCandidates = async () => {
-    var data = {
-      path: `${this.opts.options.collection}`,
-      keyword: this.refs.search.value
-    };
-
-    if (this.opts.options.filters) {
-      data.filters = this.opts.options.filters;
-    }
-
-    var res = await app.admin.crud.index(data);
-    this.candidates = res.items;
-    this.update();
-  };
-
-  this.onSearch = e => {
-    e.preventDefault();
-    this.syncCandidates();
-  };
-
-  this.getItemValue = item => {
-    return admin.utils.$get(item, this.opts.options.value_key);
-  };
-
-  this.getItemLabel = item => {
-    return admin.utils.$get(item, this.opts.options.label_key);
-  };
-
-  this.onSelect = e => {
-    this.value = e.item.item;
-    this.close();
-  };
-});
 },{}],"tags/admin-module-list.pug":[function(require,module,exports) {
 const riot = require('riot');
 
@@ -910,14 +910,14 @@ module.exports = {
   "admin-field": require("./../admin-field.pug"),
   "admin-item": require("./../admin-item.pug"),
   "admin-modal-array": require("./../admin-modal-array.pug"),
+  "admin-modal-collection": require("./../admin-modal-collection.pug"),
   "admin-module-form": require("./../admin-module-form.pug"),
   "admin-module-header": require("./../admin-module-header.pug"),
-  "admin-modal-collection": require("./../admin-modal-collection.pug"),
   "admin-module-list": require("./../admin-module-list.pug"),
   "admin-module-menu": require("./../admin-module-menu.pug"),
   "admin-page": require("./../admin-page.pug")
 };
-},{"./../admin-field.pug":"tags/admin-field.pug","./../admin-item.pug":"tags/admin-item.pug","./../admin-modal-array.pug":"tags/admin-modal-array.pug","./../admin-module-form.pug":"tags/admin-module-form.pug","./../admin-module-header.pug":"tags/admin-module-header.pug","./../admin-modal-collection.pug":"tags/admin-modal-collection.pug","./../admin-module-list.pug":"tags/admin-module-list.pug","./../admin-module-menu.pug":"tags/admin-module-menu.pug","./../admin-page.pug":"tags/admin-page.pug"}],"main.js":[function(require,module,exports) {
+},{"./../admin-field.pug":"tags/admin-field.pug","./../admin-item.pug":"tags/admin-item.pug","./../admin-modal-array.pug":"tags/admin-modal-array.pug","./../admin-modal-collection.pug":"tags/admin-modal-collection.pug","./../admin-module-form.pug":"tags/admin-module-form.pug","./../admin-module-header.pug":"tags/admin-module-header.pug","./../admin-module-list.pug":"tags/admin-module-list.pug","./../admin-module-menu.pug":"tags/admin-module-menu.pug","./../admin-page.pug":"tags/admin-page.pug"}],"main.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -925,7 +925,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _riot = _interopRequireDefault(require("riot"));
+
 require("./tags/**/*.pug");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import './tags/admin-field.pug';
 // import './tags/admin-item.pug';

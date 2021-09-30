@@ -2,6 +2,7 @@
 // import './tags/admin-item.pug';
 // import './tags/admin-page.pug';
 
+import riot from 'riot'
 import './tags/**/*.pug';
 
 var admin = {

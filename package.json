@@ -1,0 +1,30 @@
+{
+  "name": "spat-admin",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rm -rf .cache",
+    "dev": "parcel src/main.js -d ./ --out-file index.js --target node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/spat/spat-admin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/spat/spat-admin/issues"
+  },
+  "homepage": "https://github.com/spat/spat-admin#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "less": "^4.1.1",
+    "parcel-bundler": "^1.12.5",
+    "parcel-plugin-riot-pug": "git://github.com/phi-jp/parcel-plugin-riot-pug.git#037609bc2fbb17ec3c6097f879c6d29fd5e1c256",
+    "pug": "^3.0.2",
+    "riot": "git://github.com/phi-jp/riot.git#4f5be4637bc7488d51774774e3d6f2b7b0f2243a"
+  }
+}

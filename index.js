@@ -481,20 +481,6 @@ riot.tag2('admin-field-object', '<div class="fs11 bold text-gray mb8">{opts.fiel
     return data;
   };
 });
-},{}],"tags/admin-modal-array.pug":[function(require,module,exports) {
-const riot = require('riot');
-
-riot.tag2('admin-modal-array', '<div class="f flex-column bg-white w80vw h80vh rounded-8" ref="modal"> <div class="f fh p16 overflow-scroll h-full bg-whitesmoke"> <div> <input class="input w-full p4 mb8" type="{this.opts.type}" ref="input" riot-value="{opts.item}"> <div class="f fc"> <button class="block text-center p8 border rounded-4 bg-white hover-trigger hover-bg-dark mr16" type="button" onclick="{onCancel}">キャンセル</button> <button class="block text-center p8 border rounded-4 bg-white hover-trigger hover-bg-dark" type="button" onclick="{onAdd}">追加</button> </div> </div> </div> </div>', 'admin-modal-array,[data-is="admin-modal-array"]{background-color:rgba(0,0,0,0.5)}', 'class="f fh"', function (opts) {
-  this.onAdd = e => {
-    this.value = this.refs.input.value;
-    this.close();
-  };
-
-  this.onCancel = e => {
-    this.value = false;
-    this.close();
-  };
-});
 },{}],"tags/admin-item.pug":[function(require,module,exports) {
 const riot = require('riot');
 
@@ -531,6 +517,20 @@ riot.tag2('admin-item-text', '<p class="line-clamp-1">{text || opts.riotValue}</
 });
 riot.tag2('admin-item-date', '<p if="{!opts.riotValue}">-</p> <p if="{opts.riotValue}">{dayjs(opts.riotValue).format(\'YYYY/MM/DD HH:mm\')}</p>', 'admin-item-date,[data-is="admin-item-date"]{display:block}', '', function (opts) {});
 riot.tag2('admin-item-image', '<div class="rect-ogp bg-whitesmoke border"><img class="s-full object-fit-contain" if="{opts.riotValue}" riot-src="{opts.riotValue}"></div>', 'admin-item-image,[data-is="admin-item-image"]{display:block}', '', function (opts) {});
+},{}],"tags/admin-modal-array.pug":[function(require,module,exports) {
+const riot = require('riot');
+
+riot.tag2('admin-modal-array', '<div class="f flex-column bg-white w80vw h80vh rounded-8" ref="modal"> <div class="f fh p16 overflow-scroll h-full bg-whitesmoke"> <div> <input class="input w-full p4 mb8" type="{this.opts.type}" ref="input" riot-value="{opts.item}"> <div class="f fc"> <button class="block text-center p8 border rounded-4 bg-white hover-trigger hover-bg-dark mr16" type="button" onclick="{onCancel}">キャンセル</button> <button class="block text-center p8 border rounded-4 bg-white hover-trigger hover-bg-dark" type="button" onclick="{onAdd}">追加</button> </div> </div> </div> </div>', 'admin-modal-array,[data-is="admin-modal-array"]{background-color:rgba(0,0,0,0.5)}', 'class="f fh"', function (opts) {
+  this.onAdd = e => {
+    this.value = this.refs.input.value;
+    this.close();
+  };
+
+  this.onCancel = e => {
+    this.value = false;
+    this.close();
+  };
+});
 },{}],"tags/admin-modal-collection.pug":[function(require,module,exports) {
 const riot = require('riot');
 
@@ -680,6 +680,93 @@ riot.tag2('admin-module-form', '<form class="row mxn16" id="form1" if="{visible}
     });
   };
 });
+},{}],"tags/admin-module-header.pug":[function(require,module,exports) {
+const riot = require('riot');
+
+riot.tag2('admin-module-header', '<div class="bg-white box-shadow relative"> <div class="h60 f fbw fm px16"> <div class="f fm"> <div class="f fm item" each="{item in getBreadcrumbs()}"><a class="fs16 bold" if="{item.link}" href="{item.link}">{item.label}</a> <div class="fs16 bold text-gray" if="{!item.link}">{item.label}</div> <div class="text-gray arrow mx8">></div> </div> </div> <div class="f fm" if="{opts.list}"> <div class="ml8" if="{canCreate()}"><a class="button primary" href="/{opts.path}/new">NEW</a></div> </div> <div class="f fm" if="{opts.form}"> <div class="ml8" if="{canDelete()}"> <button class="button danger py6" type="button" onclick="{onDelete}"><i class="fs18 material-icons">delete</i></button> </div> <div class="ml8" if="{canUpdate()}"> <button class="primary button" onclick="{onSubmit}">SAVE</button> </div> </div> </div> </div>', 'admin-module-header,[data-is="admin-module-header"]{display:block} admin-module-header .item:last-child .arrow,[data-is="admin-module-header"] .item:last-child .arrow{display:none}', '', function (opts) {
+  this.on('mount', () => {});
+
+  this.getBreadcrumbs = () => {
+    let items = [{
+      label: 'TOP',
+      link: '/'
+    }];
+
+    if (this.opts.list) {
+      items.push({
+        label: this.opts.list.schema.label,
+        link: `/${opts.path}`
+      });
+    } else if (this.opts.form) {
+      if (this.opts.form.basename.includes('/')) {
+        let paths = this.opts.form.basename.split('/');
+        var link = "";
+        var schema = app.admin.schema;
+
+        for (var i = 0; i <= paths.length - 2; i += 2) {
+          schema = schema[paths[i]];
+          var item = {
+            label: schema.label
+          };
+
+          if (app.admin.menu[0].items.some(item => item.link === `/${paths[i]}`)) {
+            link = `/${paths[i]}`;
+            item.link = link;
+            link += `/${paths[i + 1]}`;
+          } else {
+            link += `/${paths[i]}/${paths[i + 1]}`;
+          }
+
+          items.push(item);
+          items.push({
+            label: `${paths[i + 1]}`,
+            link: link
+          });
+        }
+
+        items.push({
+          label: this.opts.form.schema.label
+        });
+      } else {
+        items.push({
+          label: this.opts.form.schema.label,
+          link: `/${this.opts.form.collection}`
+        });
+      }
+
+      items.push({
+        label: this.opts.form.id,
+        link: `/${this.opts.form.path}`
+      });
+    }
+
+    return items;
+  };
+
+  this.isLast = index => {
+    return this.opts.items.length - 1 <= index;
+  };
+
+  this.onSubmit = () => {
+    this.opts.form.submit();
+  };
+
+  this.onDelete = () => {
+    this.opts.form.del();
+  };
+
+  this.canCreate = () => {
+    return opts.list && opts.list.schema.crud && opts.list.schema.crud.create;
+  };
+
+  this.canUpdate = () => {
+    return opts.form && opts.form.schema.crud && opts.form.schema.crud.update;
+  };
+
+  this.canDelete = () => {
+    return opts.form && opts.form.schema.crud && opts.form.schema.crud.delete;
+  };
+});
 },{}],"tags/admin-module-list.pug":[function(require,module,exports) {
 const riot = require('riot');
 
@@ -770,93 +857,6 @@ riot.tag2('admin-module-list-filter_', '<div class="text-center"> <div class="fs
     return this.refs.filter.value !== '----' ? this.refs.filter.value : '';
   };
 });
-},{}],"tags/admin-module-header.pug":[function(require,module,exports) {
-const riot = require('riot');
-
-riot.tag2('admin-module-header', '<div class="bg-white box-shadow relative"> <div class="h60 f fbw fm px16"> <div class="f fm"> <div class="f fm item" each="{item in getBreadcrumbs()}"><a class="fs16 bold" if="{item.link}" href="{item.link}">{item.label}</a> <div class="fs16 bold text-gray" if="{!item.link}">{item.label}</div> <div class="text-gray arrow mx8">></div> </div> </div> <div class="f fm" if="{opts.list}"> <div class="ml8" if="{canCreate()}"><a class="button primary" href="/{opts.path}/new">NEW</a></div> </div> <div class="f fm" if="{opts.form}"> <div class="ml8" if="{canDelete()}"> <button class="button danger py6" type="button" onclick="{onDelete}"><i class="fs18 material-icons">delete</i></button> </div> <div class="ml8" if="{canUpdate()}"> <button class="primary button" onclick="{onSubmit}">SAVE</button> </div> </div> </div> </div>', 'admin-module-header,[data-is="admin-module-header"]{display:block} admin-module-header .item:last-child .arrow,[data-is="admin-module-header"] .item:last-child .arrow{display:none}', '', function (opts) {
-  this.on('mount', () => {});
-
-  this.getBreadcrumbs = () => {
-    let items = [{
-      label: 'TOP',
-      link: '/'
-    }];
-
-    if (this.opts.list) {
-      items.push({
-        label: this.opts.list.schema.label,
-        link: `/${opts.path}`
-      });
-    } else if (this.opts.form) {
-      if (this.opts.form.basename.includes('/')) {
-        let paths = this.opts.form.basename.split('/');
-        var link = "";
-        var schema = app.admin.schema;
-
-        for (var i = 0; i <= paths.length - 2; i += 2) {
-          schema = schema[paths[i]];
-          var item = {
-            label: schema.label
-          };
-
-          if (app.admin.menu[0].items.some(item => item.link === `/${paths[i]}`)) {
-            link = `/${paths[i]}`;
-            item.link = link;
-            link += `/${paths[i + 1]}`;
-          } else {
-            link += `/${paths[i]}/${paths[i + 1]}`;
-          }
-
-          items.push(item);
-          items.push({
-            label: `${paths[i + 1]}`,
-            link: link
-          });
-        }
-
-        items.push({
-          label: this.opts.form.schema.label
-        });
-      } else {
-        items.push({
-          label: this.opts.form.schema.label,
-          link: `/${this.opts.form.collection}`
-        });
-      }
-
-      items.push({
-        label: this.opts.form.id,
-        link: `/${this.opts.form.path}`
-      });
-    }
-
-    return items;
-  };
-
-  this.isLast = index => {
-    return this.opts.items.length - 1 <= index;
-  };
-
-  this.onSubmit = () => {
-    this.opts.form.submit();
-  };
-
-  this.onDelete = () => {
-    this.opts.form.del();
-  };
-
-  this.canCreate = () => {
-    return opts.list && opts.list.schema.crud && opts.list.schema.crud.create;
-  };
-
-  this.canUpdate = () => {
-    return opts.form && opts.form.schema.crud && opts.form.schema.crud.update;
-  };
-
-  this.canDelete = () => {
-    return opts.form && opts.form.schema.crud && opts.form.schema.crud.delete;
-  };
-});
 },{}],"tags/admin-module-menu.pug":[function(require,module,exports) {
 const riot = require('riot');
 
@@ -908,16 +908,16 @@ riot.tag2('admin-page', '<div class="s-full f fh"> <div class="h-full w200 flex-
 },{}],"tags/**/*.pug":[function(require,module,exports) {
 module.exports = {
   "admin-field": require("./../admin-field.pug"),
-  "admin-modal-array": require("./../admin-modal-array.pug"),
   "admin-item": require("./../admin-item.pug"),
+  "admin-modal-array": require("./../admin-modal-array.pug"),
   "admin-modal-collection": require("./../admin-modal-collection.pug"),
   "admin-module-form": require("./../admin-module-form.pug"),
-  "admin-module-list": require("./../admin-module-list.pug"),
   "admin-module-header": require("./../admin-module-header.pug"),
+  "admin-module-list": require("./../admin-module-list.pug"),
   "admin-module-menu": require("./../admin-module-menu.pug"),
   "admin-page": require("./../admin-page.pug")
 };
-},{"./../admin-field.pug":"tags/admin-field.pug","./../admin-modal-array.pug":"tags/admin-modal-array.pug","./../admin-item.pug":"tags/admin-item.pug","./../admin-modal-collection.pug":"tags/admin-modal-collection.pug","./../admin-module-form.pug":"tags/admin-module-form.pug","./../admin-module-list.pug":"tags/admin-module-list.pug","./../admin-module-header.pug":"tags/admin-module-header.pug","./../admin-module-menu.pug":"tags/admin-module-menu.pug","./../admin-page.pug":"tags/admin-page.pug"}],"main.js":[function(require,module,exports) {
+},{"./../admin-field.pug":"tags/admin-field.pug","./../admin-item.pug":"tags/admin-item.pug","./../admin-modal-array.pug":"tags/admin-modal-array.pug","./../admin-modal-collection.pug":"tags/admin-modal-collection.pug","./../admin-module-form.pug":"tags/admin-module-form.pug","./../admin-module-header.pug":"tags/admin-module-header.pug","./../admin-module-list.pug":"tags/admin-module-list.pug","./../admin-module-menu.pug":"tags/admin-module-menu.pug","./../admin-page.pug":"tags/admin-page.pug"}],"main.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

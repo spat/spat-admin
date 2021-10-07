@@ -16,7 +16,7 @@ admin-module-list
       tbody
         tr.border-bottom.hover-trigger.hover-bg-dark.cursor-pointer(each='{item in items}', onclick='{onSelect}')
           td.p12(each='{heading in schema.headings}')
-            div.fs13(data-is='admin-item-{heading.type}', value='{admin.utils.$get(item, heading.key)}', heading='{heading}')
+            div.fs13(data-is='admin-item-{heading.type}', value='{admin.utils.$get(item, heading.key)}', heading='{heading}', item='{item}')
 
     //-  もっと見る
     div.f.fh.py10(if='{next_cursor}')

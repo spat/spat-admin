@@ -234,7 +234,7 @@ admin-field-switch
   script.
 
     this.on('mount', () => {
-      this.checked = this.opts.riotValue;
+      this.checked = !!this.opts.riotValue;
       this.update();
     });
 

@@ -3,7 +3,7 @@ admin-page.s-full
     div.h-full.w200.flex-fixed.overflow-y-scroll.s-hide(data-is='admin-module-menu', menu='{app.admin.menu}', logo='{opts.logo || "/images/logo_color.png"}')
     div.s-full.f.flex-column.overflow-hidden
       header(data-is='admin-module-header', path='{path}', list='{refs.list}', form='{refs.form}')
-      div.p32.overflow-y-scroll.s-p16
+      div.f.flex-column.s-full.overflow-y-scroll.p32.s-p16
         div(if='{type === "list"}')
           div.box-shadow.rounded-4.bg-white(ref='list', data-is='admin-module-list')
         div(if='{type === "form"}')

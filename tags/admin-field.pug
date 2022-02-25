@@ -479,7 +479,9 @@ admin-field-collection
   div.fs11.bold.text-gray.mb8(if='{opts.field.label}') {opts.field.label}
   div.f.fm.w-full
     div.f.fm.w-full.p8.border.rounded-4.mr8(if='{item}')
-      div.w-full {getItemLabel(item)}
+      div.w-full.lh12
+        div {getItemLabel(item)}
+        div.fs10.text-weak ID: {item.id}
       button(type='button', onclick='{onDeleteItem}')
         i.material-icons.text-gray.fs18 delete
     div.flex-fixed

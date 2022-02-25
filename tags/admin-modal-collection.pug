@@ -6,7 +6,12 @@ admin-modal-collection.f.fh
         button.button 検索
 
     div.p16.overflow-scroll.h-full.bg-whitesmoke
-      button.block.w-full.text-left.p8.border.rounded-4.bg-white.hover-trigger.hover-bg-dark.mb8(type='button', each='{item, index in candidates}', value='{getItemValue(item)}', onclick='{onSelect}') {index}. {getItemLabel(item)}
+      button.block.w-full.text-left.p8.border.rounded-4.bg-white.hover-trigger.hover-bg-dark.mb8(type='button', each='{item, index in candidates}', value='{getItemValue(item)}', onclick='{onSelect}')
+        div.f.fm
+          div.flex-fixed.mr8 {index}.
+          div.w-full.lh12
+            div {getItemLabel(item)}
+            div.fs10.text-weak {item.id}
 
   style(type='less').
     :scope {

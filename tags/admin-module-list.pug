@@ -52,16 +52,13 @@ admin-module-list
     };
 
     this.onSelect = (e) => {
-      // デフォルトはルートパス
-      const root = opts.root || '/';
-
       // イベント発火
       this.trigger('select', {
         item: e.item.item,
       });
 
       //- 遷移
-      spat.router.push(`${root}${e.item.item.path}`);
+      spat.router.push(`/${this.path}${e.item.item.id}`);
     };
 
     this.fetch = async () => {

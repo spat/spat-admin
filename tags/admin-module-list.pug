@@ -57,8 +57,15 @@ admin-module-list
         item: e.item.item,
       });
 
-      //- 遷移
-      spat.router.push(`/${this.path}/${e.item.item.id}`);
+      const path = `/${this.path}/${e.item.item.id}`;
+      if (e.ctrlKey || e.shiftKey || e.metaKey) {
+        //- 別タブで開く
+        window.open(path, '_blank');
+      }
+      else {
+        //- 遷移
+        spat.router.push(path);
+      }
     };
 
     this.fetch = async () => {

@@ -13,7 +13,7 @@ admin-field-text
     this.on('mount', () => {
       this.datalistId = '';
       if (this.opts.field.options && this.opts.field.options.datalist) {
-        this.datalistId = `admin-field-text-datalist-${(this.getRandInt())}`;
+        this.datalistId = `admin-field-text-datalist-${this.getRandInt()}`;
       }
       this.update();
     });

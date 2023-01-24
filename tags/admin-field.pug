@@ -1,6 +1,8 @@
 admin-field-text
   div.fs11.bold.text-gray.mb8(if='{opts.field.label}') {opts.field.label}
-  input.input.w-full(ref='input', type='text', value='{opts.riotValue.toString()}', required='{opts.field.options.required}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}')
+  input.input.w-full(ref='input', type='text', value='{opts.riotValue.toString()}', required='{opts.field.options.required}', readonly='{opts.field.options.readonly}', class='{"bg-whitesmoke border-transparent": opts.field.options.readonly}', list='{datalistId}', oninput='{onInput}')
+  datalist(if='{opts.field.options.datalist}', id='{datalistId}')
+    option(each='{option in opts.field.options.datalist}', value='{option}')
 
   style(type='less').
     :scope {
@@ -8,6 +10,14 @@ admin-field-text
     }
   
   script.
+    this.on('mount', () => {
+      this.datalistId = '';
+      if (this.opts.field.options && this.opts.field.options.datalist) {
+        this.datalistId = `admin-field-text-datalist-${(this.getRandInt())}`;
+      }
+      this.update();
+    });
+
     this.getValue = () => {
       var value = this.refs.input.value;
       if (Array.isArray(this.opts.riotValue)) {
@@ -26,6 +36,22 @@ admin-field-text
       //-     value: this.refs.input.value,
       //-   });
       //- }
+    };
+
+    this.getRandInt = () => {
+      return Math.floor(Date.now() * (1 + Math.random()));
+    };
+
+    this.onInput = (e) => {
+      e.preventUpdate = true;
+      if (this.opts.field.options) {
+        this.opts.field.options.oninput({
+          tag: this,
+          field: this.opts.field,
+          item: this.opts.item,
+          value: this.getValue(),
+        });
+      }
     };
 
 admin-field-textarea

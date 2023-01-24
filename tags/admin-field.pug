@@ -44,7 +44,7 @@ admin-field-text
 
     this.onInput = (e) => {
       e.preventUpdate = true;
-      if (this.opts.field.options) {
+      if (this.opts.field.options && this.opts.field.options.oninput) {
         this.opts.field.options.oninput({
           tag: this,
           field: this.opts.field,

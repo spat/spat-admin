@@ -7,7 +7,7 @@ admin-module-form
           div.h2.w-full.bg-primary
         div.row
           div.block.w-full.mb32(each='{field in form.fields}', if='{isVisibleField(field)}', class='{field.class}')
-            div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}')
+            div(ref='fields', data-is='admin-field-{field.type}', field='{field}', value='{admin.utils.$get(item, field.key)}', item='{item}', form='{this}')
 
     //- 外から submit できるようにするためのボタン
     button.hide(ref='btn') submit
@@ -29,7 +29,8 @@ admin-module-form
       this.basename = app.utils.path.dirname(path);
       // コレクション名
       this.collection = this.basename.split('/').pop();
-      
+
+      this.item = {};
       this.reset();
 
       if (this.id !== 'new') {
@@ -65,10 +66,40 @@ admin-module-form
       this.save();
     };
 
-    this.save = async () => {
+    this.getFields = () => {
+      return Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+    };
+
+    this.getField = (key) => {
+      var fields = this.getFields();
+      return fields.find(field => field.opts.field.key === key);
+    };
+
+    this.getFieldValue = (key) => {
+      var field = this.getField();
+      if (field && field.getValue) {
+        return field.getValue();
+      }
+    };
+
+    this.setFieldValue = async (key, value) => {
+      this.item = await this.getValue();
+      admin.utils.$set(this.item, key, value);
+      this.reset();
+    };
+
+    this.setFieldValues = async (obj) => {
+      this.item = await this.getValue();
+      Object.entries(obj).forEach(([key, value]) => {
+        admin.utils.$set(this.item, key, value);
+      });
+      this.reset();
+    };
+
+    this.getValue = async () => {
       var data = {};
 
-      var fields = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+      var fields = this.getFields();
 
       var promises = fields.map(async field => {
         if (!field.getValue) return ;
@@ -84,8 +115,12 @@ admin-module-form
       });
 
       await Promise.all(promises);
+      return data;
+    };
 
-      if (!this.item) {
+    this.save = async () => {
+      var data = await this.getValue();
+      if (this.id === 'new') {
         var item = await app.admin.crud.post({
           path: this.collection,
           data,

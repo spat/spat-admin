@@ -50,6 +50,7 @@ admin-field-text
           field: this.opts.field,
           item: this.opts.item,
           value: this.getValue(),
+          form: this.opts.form,
         });
       }
     };
@@ -477,13 +478,17 @@ admin-field-array
       this.update();
     };
 
-    this.getValue = async () => {
+    this.getFields = () => {
       // 一個も設定していない場合を考慮
       if (!this.refs.fields) return [];
 
       // 配列じゃない場合を考慮
       var fields = Array.isArray(this.refs.fields) ? this.refs.fields : [this.refs.fields];
+      return fields;
+    };
 
+    this.getValue = async () => {
+      var fields = this.getFields();
       // 非同期を考慮
       var promises = fields.map(async field => {
         return field.getValue();

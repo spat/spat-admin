@@ -30,8 +30,8 @@ admin-module-form
       // コレクション名
       this.collection = this.basename.split('/').pop();
 
-      this.item = {};
       this.reset();
+      this.item = {};
 
       if (this.id !== 'new') {
         var item = await app.admin.crud.get({

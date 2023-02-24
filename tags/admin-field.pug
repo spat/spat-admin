@@ -406,6 +406,8 @@ admin-field-list
 
   script.
     this.on('mount', () => {
+      //- path がない場合 (新規作成時) はlist取得できないので何もしない
+      if (!this.opts.item.path) return ;
       this.refs.list.setup({
         path: `${this.opts.item.path}/${this.opts.field.key}`,
       });

@@ -272,9 +272,6 @@ admin-field-image
     }
 
   script.
-    if (this.opts.field.options) {
-      console.log(this.opts.field.options);
-    }
     this.on('mount', () => {
       this.url = this.opts.riotValue;
       this.update();

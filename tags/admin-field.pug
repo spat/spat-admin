@@ -275,7 +275,7 @@ admin-field-switch
 
 admin-field-image
   div.fs11.bold.text-gray.mb8 {opts.field.label}
-  div.relative.f.fh.bg-gray_pale.w-full.h-auto.max-width-500.min-height-200.cursor-pointer.mb4(onclick='{onSelectImage}')
+  div.relative.f.fh.bg-gray_pale.w-full.h-auto.max-width-500.min-height-100.cursor-pointer.mb4(onclick='{onSelectImage}', class='{opts.field.options && opts.field.options.size}')
     img.s-full.object-fit-contain.border(if="{url}", src='{url}')
     div.absolute.trbl0.s-full.f.fh.fs26 +
     div.absolute.tn16.rn16.bg-gray_pale.f.fh.circle.s32.border(if='{isDeletable()}', onclick='{delete}')
@@ -289,8 +289,8 @@ admin-field-image
       .max-width-500 {
         max-width: 500px;
       }
-      .min-height-200 {
-        min-height: 200px;
+      .min-height-100 {
+        min-height: 100px;
       }
     }
 

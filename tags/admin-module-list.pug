@@ -101,10 +101,12 @@ admin-module-list
     this.onSearch = (e) => {
       e.preventDefault();
       //- TODO: 仕様決まったら合わせて対応
-      let filters = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
-      filters.forEach(filter => {
-        filter.refs.filter.value = '----';
-      });
+      if (this.refs.filters) {
+        let filters = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
+        filters.forEach(filter => {
+          filter.refs.filter.value = '----';
+        });
+      }
       this.update();
       
       this.search();
@@ -113,7 +115,9 @@ admin-module-list
     this.onFilter = (e) => {
       e.stopPropagation();
       //- TODO: 仕様決まったら合わせて対応
-      this.refs.search.value = '';
+      if (this.refs.search) {
+        this.refs.search.value = '';
+      }
       this.update();
       
       this.search();

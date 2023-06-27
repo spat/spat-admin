@@ -73,7 +73,7 @@ admin-module-list
       var filters = {};
 
       if (this.refs.filters) {
-        let filters = [].concat(this.refs.filters || []);
+        var filters_tag = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
         filters_tag.forEach(tag => {
           filters[tag.opts.filter.key] = tag.getValue();
         });
@@ -102,7 +102,7 @@ admin-module-list
       e.preventDefault();
       //- TODO: 仕様決まったら合わせて対応
       if (this.refs.filters) {
-        let filters = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
+        let filters = [].concat(this.refs.filters || []);
         filters.forEach(filter => {
           filter.refs.filter.value = '----';
         });

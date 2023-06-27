@@ -3,7 +3,7 @@ admin-module-list
   div.h80.f.fbw.fm.p16.border-bottom(show='{schema.search !== false || schema.filters.length}')
     div.f.fm
       div.mr16(ref='filters', each='{filter in schema.filters}', data-is='admin-module-list-filter_', filter='{filter}', onchange='{onFilter}')
-    form(show='{schema.search !== false}', onsubmit='{onSearch}')
+    form(show='{schema.search}', onsubmit='{onSearch}')
       div.f
         input.input.mr8(ref='search', type='search', placeholder='Search')
         button.button 検索

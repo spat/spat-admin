@@ -2,7 +2,7 @@
 admin-module-list
   div.h80.f.fbw.fm.p16.border-bottom(show='{schema.search !== false}')
     div.f.fm
-      div.mr16(ref='filters', each='{filter in schema.filters}', data-is='admin-module-list-filter_', filter='{filter}', onchange='{search}')
+      div.mr16(ref='filters', each='{filter in schema.filters}', data-is='admin-module-list-filter_', filter='{filter}', onchange='{onFilter}')
     form(onsubmit='{onSearch}')
       div.f
         input.input.mr8(ref='search', type='search', placeholder='Search')
@@ -88,8 +88,6 @@ admin-module-list
       this.items.push(...items);
       this.next_cursor = next_cursor;
       this.update();
-      
-
     };
 
     this.search = () => {
@@ -102,6 +100,18 @@ admin-module-list
 
     this.onSearch = (e) => {
       e.preventDefault();
+      let filters = Array.isArray(this.refs.filters) ? this.refs.filters : [this.refs.filters];
+      filters.forEach(filter => {
+        filter.refs.filter.value = '----';
+      });
+      this.update();
+      this.search();
+    };
+
+    this.onFilter = (e) => {
+      e.stopPropagation();
+      this.refs.search.value = '';
+      this.update();
       this.search();
     };
 

@@ -73,7 +73,7 @@ admin-module-list
       var filters = {};
 
       if (this.refs.filters) {
-        let filters = [].concat(this.refs.filters);
+        let filters = [].concat(this.refs.filters || []);
         filters_tag.forEach(tag => {
           filters[tag.opts.filter.key] = tag.getValue();
         });

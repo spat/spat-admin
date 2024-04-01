@@ -86,8 +86,16 @@ admin-field-textarea
         });
         var urls = await Promise.all(promises);
 
-        // markdown 形式に変換してつなげる
-        var images_text = urls.map(url => `![](${url})`).join('\n');
+        let images_text = '';
+        if (this.opts.field.options.dragAndDrop && this.opts.field.options.dragAndDrop.createTextType === 'html') {
+          let _width = this.opts.field.options.dragAndDrop.width ? `width="${this.opts.field.options.dragAndDrop.width}"` : '';
+          let _height = this.opts.field.options.dragAndDrop.height ? `height="${this.opts.field.options.dragAndDrop.height}"` : '';
+          images_text = urls.map(url => `<img src="${url}" ${_width} ${_height} />`).join('<br>');
+        }
+        else {
+          // markdown 形式に変換してつなげる
+          images_text = urls.map(url => `![](${url})`).join('\n');
+        }
 
         // textarea に追加
         this.insertText(images_text);

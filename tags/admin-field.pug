@@ -87,10 +87,10 @@ admin-field-textarea
         var urls = await Promise.all(promises);
 
         let images_text = '';
-        if (this.opts.field.options.dragAndDrop && this.opts.field.options.dragAndDrop.createTextType === 'html') {
-          let _width = this.opts.field.options.dragAndDrop.width ? `width="${this.opts.field.options.dragAndDrop.width}"` : '';
-          let _height = this.opts.field.options.dragAndDrop.height ? `height="${this.opts.field.options.dragAndDrop.height}"` : '';
-          images_text = urls.map(url => `<img src="${url}" ${_width} ${_height} />`).join('<br>');
+        if (this.opts.field.options.insertText && this.opts.field.options.insertText.textType === 'html') {
+          let _width = this.opts.field.options.insertText.width ? `width="${this.opts.field.options.insertText.width}"` : '';
+          let _height = this.opts.field.options.insertText.height ? `height="${this.opts.field.options.insertText.height}"` : '';
+          images_text = urls.map(url => `<img src="${url}" ${_width} ${_height} />`).join('\n');
         }
         else {
           // markdown 形式に変換してつなげる

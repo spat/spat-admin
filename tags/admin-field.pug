@@ -93,6 +93,11 @@ admin-field-textarea
           let _height = this.opts.field.options.insertImage.height ? `height="${this.opts.field.options.insertImage.height}"` : '';
           images_text = urls.map(url => `<img src="${url}" ${_width} ${_height} />`).join('\n');
         }
+        else {
+          console.error("画像を挿入できませんでした。");
+          // markdown 形式に変換してつなげる
+          // images_text = urls.map(url => `![](${url})`).join('\n');
+        }
 
         // textarea に追加
         this.insertText(images_text);
